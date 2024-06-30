@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Tomoto Masuda</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .custom-footer {
+            font-size: 12px;
+            margin-top: 40px;
+            border-top: 1px solid #d1d5db;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-md">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between">
+                <div class="flex space-x-7">
+                    <div>
+                        <a href="#" class="flex items-center py-4 px-2">
+                            <span class="font-semibold text-gray-500 text-lg">Tomoto Masuda</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-3 ">
+                    <a href="https://users.sussex.ac.uk/~tm501/" class="py-2 px-2 font-medium text-gray-500 rounded hover:bg-green-500 hover:text-white transition duration-300">Home</a>
+                    <a href="cv_page.html" class="py-2 px-2 font-medium text-gray-500 rounded hover:bg-green-500 hover:text-white transition duration-300">CV</a>
+                    <a href="blog_page.html" class="py-2 px-2 font-medium text-gray-500 rounded hover:bg-green-500 hover:text-white transition duration-300">Blog</a>
+                    <a href="contact_page.html" class="py-2 px-2 font-medium text-white bg-green-500 rounded hover:bg-green-400 transition duration-300">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl">
+        <h1 class="text-4xl font-bold mb-6 text-gray-800">Contact Information</h1>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <div>
+                <h2 class="text-2xl font-semibold mb-4 text-gray-700">Tomoto Masuda</h2>
+                <p class="mb-2"><strong>Affiliation:</strong> University of Sussex</p>
+                <p class="mb-2"><strong>Position:</strong> Research Fellow</p>
+                <p class="mb-2"><strong>Phone:</strong> +44 (0)1234 567890</p>
+                <p class="mb-2"><strong>Email:</strong> t.masuda@sussex.ac.uk</p>
+                <p class="mb-2"><strong>Address:</strong><br>
+                    School of Engineering and Informatics<br>
+                    University of Sussex<br>
+                    Falmer, Brighton BN1 9QJ<br>
+                    United Kingdom
+                </p>
+            </div>
+            <div>
+                <img src="profile_photo.jpg" alt="Tomoto Masuda" class="w-full h-auto rounded-lg shadow-md mb-4">
+                <div class="grid grid-cols-2 gap-2">
+                    <img src="lab_photo.jpg" alt="Lab Photo" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="conference_photo.jpg" alt="Conference Photo" class="w-full h-auto rounded-lg shadow-md">
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Get in Touch</h2>
+            <form class="space-y-4">
+                <div>
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Your Name</label>
+                    <input type="text" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                </div>
+                <div>
+                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Your Email</label>
+                    <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                </div>
+                <div>
+                    <label for="message" class="block mb-2 text-sm font-medium text-gray-900">Your Message</label>
+                    <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" required></textarea>
+                </div>
+                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Send Message</button>
+            </form>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Office Hours</h2>
+            <p>Monday - Friday: 9:00 AM - 5:00 PM (GMT)</p>
+            <p>I'm available for virtual meetings outside these hours by appointment.</p>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Connect with Me</h2>
+            <div class="flex space-x-4">
+                <a href="#" class="text-blue-600 hover:text-blue-800">LinkedIn</a>
+                <a href="#" class="text-blue-400 hover:text-blue-600">Twitter</a>
+                <a href="#" class="text-gray-800 hover:text-gray-600">GitHub</a>
+                <a href="#" class="text-green-600 hover:text-green-800">ResearchGate</a>
+            </div>
+        </div>
+
+        <div class="custom-footer">
+            <p>Last updated: November 2023</p>
+        </div>
+    </div>
+</body>
+</html>

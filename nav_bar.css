@@ -1,0 +1,105 @@
+
+/*
+.navbar {
+  overflow: hidden;
+  background-color: black; /* add this line to make the navbar background black 
+}
+
+*/
+
+/*
+
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 70px;
+  background-color: black;
+  color: white; 
+  z-index: 9997;}
+
+*/
+
+
+
+/*
+
+.navbar { 
+  position: fixed; 
+  top: 0; width: 100%; /* height: 70px; を削除 */ /*
+  background-color: black; 
+  color: white; 
+  z-index: 9997; 
+  /* flex-direction: column に対応するために、以下のプロパティを追加.このようにすると、ナビゲーションバーの高さは子要素の高さに合わせて自動的に調整され、@mediaでflex-direction: columnを指定してもはみ出しません。また、子要素は水平方向と垂直方向に中央寄せされます。 */ /*
+  display: flex; 
+  flex-direction: row; 
+  flex-wrap: wrap; 
+  align-items: center; justify-content: center; }
+
+*/
+
+.navbar { position: fixed; 
+  top: 0; /* width: 100%; を削除 */
+  left: 0; /* 左端に合わせる */  
+  right: 0; /* 右端に合わせる */ 
+  background-color: black; 
+  color: white;
+  z-index: 998;
+  display: flex; 
+  flex-direction: row; /* flex-wrap: wrap;を削除。このようにすると、ナビゲーションバーの幅はスクロールバーの影響を受けずに、ブラウザウィンドウの左端から右端まで広がります。また、ナビゲーションバーの子要素は、親要素の幅に収まるように調整され、折り返されません。*/ 
+  align-items: center; justify-content: center; }
+
+
+.w3-row.w3-padding.w3-black {
+  z-index: 9999; 
+}
+
+
+ /* add this line to make the button align to the left */
+
+ /* 
+.navbar-items {
+  display: flex;
+  justify-content: space-between; float: left;
+
+}
+
+ */
+
+.navbar-items {　display: flex; justify-content: center; /* space-between を center に変更 / / float: left; を削除 */ }
+
+
+.navbar-item {
+  padding: 14px 16px;
+  text-decoration: none;
+  color: white; font-size: 15px;/* add this line to make the text color white */
+}
+
+.navbar-item:hover {
+  background-color: #ddd; /* add this line to make the button change color on hover */
+  color: black; /* add this line to make the text color black on hover */
+}
+
+
+/*
+ .navbar {
+    position: fixed; top: 0;
+  width: 100%; z-index: 9999; 
+  }
+  
+.navbar-items {
+    position: fixed;top: 0;
+  width: 100%; z-index: 9998; 
+  }
+
+*/
+
+@media (max-width: 400px) {
+  .navbar {
+    flex-direction: column;
+  }
+  
+  .navbar-items {
+    flex-direction: column;
+  }
+}
