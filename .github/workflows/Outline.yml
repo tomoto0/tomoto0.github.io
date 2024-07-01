@@ -10,8 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Outline repository
         uses: actions/checkout@v2
+        with:
+          repository: tomoto0/Outline
+          path: Outline
+
+      - name: Checkout tomoto0.github.io repository
+        uses: actions/checkout@v2
+        with:
+          repository: tomoto0/tomoto0.github.io
+          path: tomoto0.github.io
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
@@ -23,7 +32,7 @@ jobs:
 
       - name: Convert LaTeX to HTML
         run: |
-          pandoc Outline.tex -o outline_temp.html \
+          pandoc ./Outline/Outline.tex -o outline_temp.html \
             --standalone \
             --mathjax \
             --css=https://latex.vercel.app/style.css \
@@ -31,7 +40,7 @@ jobs:
 
       - name: Add additional CSS and scripts
         run: |
-          cat <<EOF > outline.html
+          cat <<EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -46,9 +55,9 @@ jobs:
           <body class="latex-dark-auto">
           EOF
           
-          cat outline_temp.html >> outline.html
+          cat outline_temp.html >> ./tomoto0.github.io/outline.html
           
-          cat <<EOF >> outline.html
+          cat <<EOF >> ./tomoto0.github.io/outline.html
           <script>
             MathJax = {
               tex: {
@@ -63,11 +72,13 @@ jobs:
           rm outline_temp.html
 
       - name: Commit and push changes
-        env:
-          TOKEN: ${{ secrets.ACTIONS_SECRET_GITHUB_TOKEN }}
         run: |
+          cd ./tomoto0.github.io
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add outline.html
           git commit -m 'Convert LaTeX to HTML with improved styling'
-          git push https://x-access-token:${TOKEN}@github.com/tomoto0/Outline.git
+          git push
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
