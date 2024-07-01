@@ -11,21 +11,16 @@ jobs:
 
     steps:
       - name: Checkout Outline repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: tomoto0/Outline
           path: Outline
 
       - name: Checkout tomoto0.github.io repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: tomoto0/tomoto0.github.io
           path: tomoto0.github.io
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20'
 
       - name: Install pandoc
         run: sudo apt-get install -y pandoc
@@ -40,7 +35,7 @@ jobs:
 
       - name: Add additional CSS and scripts
         run: |
-          cat <<EOF > ./tomoto0.github.io/outline.html
+          cat <<'EOF' > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -57,7 +52,7 @@ jobs:
           
           cat outline_temp.html >> ./tomoto0.github.io/outline.html
           
-          cat <<EOF >> ./tomoto0.github.io/outline.html
+          cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
             MathJax = {
               tex: {
@@ -79,6 +74,5 @@ jobs:
           git add outline.html
           git commit -m 'Convert LaTeX to HTML with improved styling'
           git push
-
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
