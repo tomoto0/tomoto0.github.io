@@ -26,13 +26,12 @@ jobs:
           pandoc Outline.tex -o outline_temp.html \
             --standalone \
             --mathjax \
-            --template=custom_template.html \
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments
 
       - name: Add additional CSS and scripts
         run: |
-          cat <<EOF >> outline.html
+          cat <<EOF > outline.html
           <!DOCTYPE html>
           <html lang="en">
           <head>
