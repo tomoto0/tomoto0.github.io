@@ -22,6 +22,11 @@ jobs:
           path: outline-repo
           token: ${{ secrets.ACTIONS_SECRET_GITHUB_TOKEN }}
 
+      - name: Install LaTeX packages
+        run: |
+          tlmgr update --self
+          tlmgr install algorithms algorithm2e
+
       - name: Check files
         run: |
           echo "Current repository:"
