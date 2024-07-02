@@ -75,4 +75,4 @@ jobs:
           git commit -m 'Convert LaTeX to HTML with improved styling'
           git push
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.ACTIONS_SECRET_GITHUB_TOKEN }}
