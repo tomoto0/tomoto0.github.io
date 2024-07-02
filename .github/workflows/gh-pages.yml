@@ -20,7 +20,7 @@ jobs:
         with:
           repository: tomoto0/Outline
           path: outline-repo
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
 
       - name: Install LaTeX packages
         run: |
