@@ -1,53 +1,20 @@
-name: github-pages
+name: Sync to tomoto0.github.io
+
 on:
   push:
     branches:
-      - main
+      - main # プッシュ元のOverleafプロジェクトのブランチ名
+
 jobs:
-  deploy:
-    name: github-pages
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
+  sync:
     runs-on: ubuntu-latest
-    container: arcatdmz/texlive
     steps:
-      - name: Checkout current repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Push to tomoto0.github.io
+        uses: ad-m/github-push-action@master
         with:
-          path: current-repo
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Checkout Outline repository
-        uses: actions/checkout@v3
-        with:
-          repository: tomoto0/Outline
-          path: outline-repo
-          token: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
-
-      - name: Install LaTeX packages
-        run: |
-          apt-get update && apt-get install -y texlive-full
-
-      - name: Build PDF file
-        run: |
-          cd outline-repo
-          pdflatex -interaction=nonstopmode Outline.tex
-          pdflatex -interaction=nonstopmode Outline.tex
-          mkdir -p ../current-repo/docs
-          cp Outline.pdf ../current-repo/docs/
-
-      - name: List contents of docs directory
-        run: |
-          ls -la current-repo/docs
-
-      - name: Deploy pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./current-repo/docs
-          force_orphan: true
-
-      - name: Check LaTeX log
-        if: failure()
-        run: |
-          cd outline-repo
-          cat Outline.log
+          github_token: ${{ secrets.ACTIONS_SECRET_GITHUB_TOKEN }}
+          branch: master  # tomoto0.github.ioのリポジトリのブランチ名 (通常はmaster)
+          repository: tomoto0/tomoto0.github.io
+          directory: ./ #  プッシュするディレクトリ。ルートディレクトリならそのまま
