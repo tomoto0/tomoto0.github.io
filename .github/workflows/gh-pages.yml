@@ -20,7 +20,7 @@ jobs:
         with:
           repository: tomoto0/Outline
           path: outline-repo
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          token: ${{ secrets.ACTIONS_SECRET_GITHUB_TOKEN }}
 
       - name: Check files
         run: |
