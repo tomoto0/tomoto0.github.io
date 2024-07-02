@@ -30,16 +30,21 @@ jobs:
       - name: Build PDF file
         run: |
           cd outline-repo
-          pdflatex Outline.tex
-          pdflatex Outline.tex
+          pdflatex -interaction=nonstopmode Outline.tex
+          pdflatex -interaction=nonstopmode Outline.tex
           mkdir -p ../current-repo/docs
           cp Outline.pdf ../current-repo/docs/
+
+      - name: List contents of docs directory
+        run: |
+          ls -la current-repo/docs
 
       - name: Deploy pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.ACTIONS_SECRET_GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./current-repo/docs
+          force_orphan: true
 
       - name: Check LaTeX log
         if: failure()
