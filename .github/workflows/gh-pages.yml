@@ -10,15 +10,34 @@ jobs:
     runs-on: ubuntu-latest
     container: arcatdmz/texlive
     steps:
-      - name: Checkout repository
+      - name: Checkout current repository
         uses: actions/checkout@v3
+        with:
+          path: current-repo
+
+      - name: Checkout Outline repository
+        uses: actions/checkout@v3
+        with:
+          repository: tomoto0/Outline
+          path: outline-repo
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
       - name: Check files
-        run: ls -la
+        run: |
+          echo "Current repository:"
+          ls -la current-repo
+          echo "Outline repository:"
+          ls -la outline-repo
+
       - name: Build PDF file
         run: |
-          latexmk -pdf Outline.tex && latexmk -c && mkdir -p docs && cp *.pdf ./docs/
+          cd outline-repo
+          latexmk -pdf Outline.tex
+          mkdir -p ../current-repo/docs
+          cp *.pdf ../current-repo/docs/
+
       - name: Deploy pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.ACTIONS_SECRET_GITHUB_TOKEN }}
-          publish_dir: ./docs
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./current-repo/docs
