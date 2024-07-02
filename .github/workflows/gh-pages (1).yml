@@ -10,20 +10,38 @@ jobs:
     runs-on: ubuntu-latest
     container: arcatdmz/texlive
     steps:
-      - name: Checkout repository
+      - name: Checkout current repository
         uses: actions/checkout@v3
-        
-      - name: Set up LaTeX
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y texlive-full  # Install full TeX Live distribution
-        sudo apt-get install -y texlive-latex-extra  # Additional LaTeX packages
-        sudo apt-get install -y texlive-science  # Science-related LaTeX packages including algorithm2e
-        
+        with:
+          path: current-repo
+
+      - name: Checkout Outline repository
+        uses: actions/checkout@v3
+        with:
+          repository: tomoto0/Outline
+          path: outline-repo
+          token: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
+
+      - name: Install LaTeX packages
+        run: |
+          apt-get update && apt-get install -y texlive-full
+
       - name: Build PDF file
-        run: latexmk -pdf && latexmk -c && mkdir -p docs && cp *.pdf ./docs/
+        run: |
+          cd outline-repo
+          pdflatex Outline.tex
+          pdflatex Outline.tex
+          mkdir -p ../current-repo/docs
+          cp Outline.pdf ../current-repo/docs/
+
       - name: Deploy pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.ACTIONS_SECRET_GITHUB_TOKEN }}
-          publish_dir: ./docs
+          publish_dir: ./current-repo/docs
+
+      - name: Check LaTeX log
+        if: failure()
+        run: |
+          cd outline-repo
+          cat Outline.log
