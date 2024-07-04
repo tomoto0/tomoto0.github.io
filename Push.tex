@@ -1,1 +1,114 @@
- Push
+ %%%% Drawing Edgeworth Box with LaTeX and TikZ
+%%%% This LaTeX code automatically generates a figure representing a 2-person 2-good exchange economy in the form of an Edgeworth Box. By simply inputting seven variables at the beginning, including initial endowments, parameters of the Cobb-Douglas utility function, and the exchange ratio, the following elements are produced in the output: the Edgeworth Box, the budget constraint line, the demanded quantities and the associated indifference curves tangent to the budget constraint line, and the contract curve. All the lines and curves depicted are calculated based on the inputted parameters.
+% In this model, we assume that individuals A and B each maximize Cobb-Douglas utility functions under the relative price of x, denoted by p. 
+% This code is published by Kan Takeuchi on August 1st, 2023.
+
+% Tip: Please adjust the coefficient to \Width for a better appearance of the indifferent curves. The coefficients are currently set to (0.1, 0.15) for A and (0.14, 0.2) for B. 
+
+\documentclass{article}
+\usepackage{tikz}
+\begin{document}
+
+\begin{tikzpicture}[scale=1.0]
+%%%% You can change the size of the total image using the lowercase 'scale' here. However, I recommend not using this one, but rather changing the upper case 'Scale' below.
+%%%% Input your own seven parameters, 
+%%%% IniXA, IniYA, IniXB, IniYB, AX, BX, and PriceX. 
+%%%% Currently, they are (3,3,5,3), 1/4, 1/2, and 1. 
+\def\Scale{1} 
+ % When the box is too large, specify a number less than 1.
+\def\IniXA{3*\Scale} % \bar{x_A}
+\def\IniYA{3*\Scale} % \bar{y_A}
+\def\IniXB{5*\Scale} % \bar{x_B}
+\def\IniYB{3*\Scale} % \bar{y_B}
+\def\AX{1/4} % a = The exponent of x in A's utility function. 
+\def\BX{1/2} % b = The exponent of x in B's utility function.  
+\def\PriceX{1} 
+
+%%%%%%%%%%%% The rest will be taken care of by LaTeX. 
+%%%%%% start computing
+\def\Width{\IniXA  + \IniXB} % The width of the box
+\def\Height{\IniYA + \IniYB}
+\def\AY{1 - (\AX)} % AX+AY = 1. It would not work otherwise. 
+\def\BY{1 - (\BX)} % AX+AY = 1. It would not work otherwise.
+
+% Compute the budget for the budget line.
+\def\MA{(\PriceX) * \IniXA + \IniYA }
+\def\MB{(\PriceX) * \IniXB + \IniYB }
+
+% Compute the demand A
+\def\DXA{(\MA)*(\AX)/(\PriceX)}
+\def\DYA{(\MA)*(\AY)}
+\def\AU{((\DXA)^(\AX))*((\DYA)^(\AY)}
+
+% Compute the demand B
+\def\DXB{((\MB)*(\BX)/(\PriceX))}
+\def\DYB{((\MB)*(\BY))}
+\def\BU{((\DXB)^(\BX))*((\DYB)^(\BY)}
+
+% Compute the budget line
+% Budget line starts at
+\def\Bstart{ max((((\MA) - (\Height)) / (\PriceX)) , 0)}
+% Budget line ends at
+\def\Bend{ min(((\MA) / (\PriceX)) , (\Width))}
+
+%%%%%%%%%%%%
+%%%%%% start drawing
+
+% Origin and Axis for A
+\filldraw[black] (0,0) circle (0pt) node[left ]{$O_A$};
+\draw[->](0,0)--({(\Width)+0.5},0)  node[right]{$x_A$};
+\draw[->](0,0)--(0,{(\Height)+0.5}) node[above]{$y_A$}; 
+
+% Origin and Axis for B
+\filldraw[black] ({\Width},{\Height}) circle(0pt) node[right]{$O_B$};
+\draw[->]({\Width},{\Height})--(-0.5,{\Height})   node[left ]{$x_B$}; 
+\draw[->]({\Width},{\Height})--({\Width},-0.5)    node[below]{$y_B$};
+
+%Budget Line
+\draw [domain= \Bstart : \Bend ] plot[smooth]
+    (\x, {(-\PriceX)*\x + (\MA)});
+
+%Initial Endowment
+\filldraw[black] (\IniXA,\IniYA) 
+    circle (1.5pt) node[above right]{$(\bar{x},\bar{y})$};
+
+% Demand A
+\filldraw[black] ({\DXA},{\DYA}) 
+    circle(1.5pt) node[above right]{$A$};
+\draw[densely dotted]
+    ({\DXA},{\DYA})--({\DXA},0) node[below]{$x^\ast_A$};
+\draw[densely dotted]
+    ({\DXA},{\DYA})--(0,{\DYA}) node[left ]{$y^\ast_A$};
+
+% Demand B
+\filldraw[black] ({(\Width) - \DXB},{(\Height) - \DYB}) 
+    circle(1.5pt) node[below left]{$B$};
+\draw[densely dotted]
+    ({\Width - \DXB},{\Height - \DYB})--({\Width - \DXB},\Height) node[above]{$x^\ast_B$};
+\draw[densely dotted]
+    ({\Width - \DXB},{\Height - \DYB})--(\Width,{\Height - \DYB}) node[right]{$y^\ast_B$};
+
+%Indifference curve for A
+\draw [domain=((\DXA)-(0.1*(\Width))):(\DXA)+(0.15*(\Width))]
+    plot[smooth](\x, {((\AU)*(\x^(-\AX)))^(1/(\AY))});
+    
+%Indifference curve for B
+\draw [domain=((\DXB)-(0.14*(\Width))):( (\DXB)+(0.2*(\Width)))]
+    plot[smooth]({-\x+(\Width)}, {(\Height) -((\BU)*(\x^(-\BX)))^(1/(\BY))});
+
+%Contract Curve
+\draw [domain=0: (\Width) , dotted] 
+    plot[smooth]
+    (\x, {(\x*(\AY)*(\BX)*(\Height))/((\AX)*(\BY)*(\Width) + ((\AY)*(\BX)-(\AX)*(\BY))*\x });
+
+\end{tikzpicture}
+
+% The code can be freely modified and used without copyright attribution for research or educational purposes such as in university or school classes, homework, or in the creation of materials that are freely made public such as blog posts or lecture materials. No prior or subsequent permission is required. It is assumed that I do not have the copyright of the diagrams you create. Even if I do, I relinquish it.
+
+% If the code is used in a profitable project that generates over 10,000 US dollars in revenue, I would appreciate it if a donation equivalent to 100 US dollars could be made to the Red Cross in the user's country of residence. In such cases, it would also be appreciated if the user could acknowledge the use of my code and its copyright in footnotes or in a similar manner.
+
+% However, for the portions of the code that use programs like \LaTeX \  and TikZ, their respective usage conditions, if any, will apply.
+
+% Enjoy!
+
+\end{document}
