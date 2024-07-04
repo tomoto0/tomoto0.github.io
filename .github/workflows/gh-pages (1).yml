@@ -8,17 +8,20 @@ jobs:
     name: github-pages
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
+    container: arcatdmz/texlive
     steps:
       - name: Checkout current repository
         uses: actions/checkout@v3
         with:
           path: current-repo
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout Outline repository
         uses: actions/checkout@v3
         with:
           repository: tomoto0/Outline
           path: outline-repo
+          token: ${{ secrets.GITHUB_TOKEN }} 
 
       - name: Install LaTeX packages
         run: |
@@ -26,11 +29,16 @@ jobs:
 
       - name: Build PDF file
         run: |
-          cd outline-repo
-          pdflatex -interaction=nonstopmode Outline.tex
-          pdflatex -interaction=nonstopmode Outline.tex
-          mkdir -p ../current-repo/docs
-          cp Outline.pdf ../current-repo/docs/
+          if [ -d "outline-repo" ]; then
+            cd outline-repo
+            pdflatex -interaction=nonstopmode Outline.tex
+            pdflatex -interaction=nonstopmode Outline.tex
+            mkdir -p ../current-repo/docs
+            cp Outline.pdf ../current-repo/docs/
+          else
+            echo "Error: outline-repo directory not found."
+            exit 1
+          fi
 
       - name: List contents of docs directory
         run: |
@@ -46,5 +54,7 @@ jobs:
       - name: Check LaTeX log
         if: failure()
         run: |
-          cd outline-repo
-          cat Outline.log
+          if [ -d "outline-repo" ]; then
+            cd outline-repo
+            cat Outline.log
+          fi 
