@@ -14,14 +14,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: current-repo
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout Outline repository
         uses: actions/checkout@v3
         with:
           repository: tomoto0/Outline
           path: outline-repo
-          token: ${{ secrets.New_fine-grained_personal_access_token }}
+          token: ${{ secrets.NEW_FINE_GRAINED_PAT }}
 
       - name: Install LaTeX packages
         run: |
@@ -42,7 +41,7 @@ jobs:
       - name: Deploy pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.New_fine-grained_personal_access_token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./current-repo/docs
           force_orphan: true
 
