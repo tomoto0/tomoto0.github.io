@@ -21,7 +21,7 @@ jobs:
         with:
           repository: tomoto0/Outline
           path: outline-repo
-          token: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
+          token: ${{ secrets.New_fine-grained_personal_access_token }}
 
       - name: Install LaTeX packages
         run: |
@@ -42,7 +42,7 @@ jobs:
       - name: Deploy pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.New_fine-grained_personal_access_token }}
           publish_dir: ./current-repo/docs
           force_orphan: true
 
