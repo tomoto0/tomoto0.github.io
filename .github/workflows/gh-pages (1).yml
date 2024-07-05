@@ -21,7 +21,7 @@ jobs:
         with:
           repository: tomoto0/Outline
           path: outline-repo
-          token: ${{ secrets.GITHUB_TOKEN }} 
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install LaTeX packages
         run: |
@@ -31,6 +31,8 @@ jobs:
         run: |
           if [ -d "outline-repo" ]; then
             cd outline-repo
+            pdflatex -interaction=nonstopmode Outline.tex
+            bibtex Outline  # 参考文献のためにbibtexを実行
             pdflatex -interaction=nonstopmode Outline.tex
             pdflatex -interaction=nonstopmode Outline.tex
             mkdir -p ../current-repo/docs
@@ -44,12 +46,26 @@ jobs:
         run: |
           ls -la current-repo/docs
 
-      - name: Deploy pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Checkout main branch
+        uses: actions/checkout@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./current-repo/docs
-          force_orphan: true
+          ref: main
+          path: main-repo
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Copy PDF to main branch
+        run: |
+          mkdir -p main-repo/docs
+          cp current-repo/docs/Outline.pdf main-repo/docs/
+
+      - name: Commit and push PDF to main branch
+        run: |
+          cd main-repo
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          git add docs/Outline.pdf
+          git commit -m "Add generated PDF to docs"
+          git push origin main
 
       - name: Check LaTeX log
         if: failure()
@@ -57,4 +73,4 @@ jobs:
           if [ -d "outline-repo" ]; then
             cd outline-repo
             cat Outline.log
-          fi 
+          fi
