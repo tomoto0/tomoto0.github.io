@@ -34,12 +34,15 @@ jobs:
             --highlight-style=pygments
 
       - name: Extract title from LaTeX file
+        id: extract-title
         run: |
-          TITLE=$(grep -oP '(?<=\\title{).*(?=})' ./Outline/Outline.tex | sed 's/\\break//g')
-          echo "LATEX_TITLE=$TITLE" >> $GITHUB_ENV
+          TITLE=$(grep -oP '(?<=\\title{)(.*?)(?=})' ./Outline/Outline.tex)
+          echo "::set-output name=title::$TITLE"
 
       - name: Add additional CSS and scripts
         run: |
+          TITLE="${{ steps.extract-title.outputs.title }}"
+          
           cat <<EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
@@ -73,7 +76,7 @@ jobs:
             </style>
           </head>
           <body class="latex-dark-auto">
-            <h1>${LATEX_TITLE}</h1>
+            <h1>$TITLE</h1>
             <div class="download-container">
               <a href="Outline.pdf" download>
                 <button class="download-button">
@@ -82,10 +85,10 @@ jobs:
               </a>
             </div>
           EOF
-          
-          sed '1,/<body>/d; /<\/body>/,$d' outline_temp.html >> ./tomoto0.github.io/outline.html
-          
-          cat <<EOF >> ./tomoto0.github.io/outline.html
+
+          cat outline_temp.html >> ./tomoto0.github.io/outline.html
+
+          cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
             MathJax = {
               tex: {
@@ -96,7 +99,7 @@ jobs:
           </body>
           </html>
           EOF
-          
+
           rm outline_temp.html
 
       - name: Commit and push changes
