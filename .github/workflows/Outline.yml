@@ -22,14 +22,15 @@ jobs:
           repository: tomoto0/tomoto0.github.io
           path: tomoto0.github.io
 
-      - name: Install pandoc
-        run: sudo apt-get install -y pandoc
+      - name: Install pandoc and sed
+        run: sudo apt-get install -y pandoc sed
 
-      - name: Remove LaTeX title and get title text
+      - name: Extract and remove title from LaTeX
         run: |
-          TITLE=$(grep -oP '\\title{\K.*(?=\\break}' ./Outline/Outline.tex)
-          sed -i '/\\title{.*}/d' ./Outline/Outline.tex
-          echo $TITLE > title.txt
+          # Extract title from LaTeX file (assuming the format is \title{title\break})
+          title=$(sed -n 's/\\title{\(.*\)\\\\break}/\1/p' ./Outline/Outline.tex)
+          # Remove title from LaTeX file
+          sed -i 's/\\title{.*\\break}//' ./Outline/Outline.tex
 
       - name: Convert LaTeX to HTML
         run: |
@@ -39,16 +40,15 @@ jobs:
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments
 
-      - name: Add additional CSS and scripts with Title
+      - name: Add additional CSS and scripts
         run: |
-          TITLE=$(cat title.txt)
           cat <<EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Research Outline</title>
+            <title>$title</title>
             <link rel="stylesheet" href="https://latex.vercel.app/style.css">
             <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
             <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -75,7 +75,7 @@ jobs:
             </style>
           </head>
           <body class="latex-dark-auto">
-            <h1>\$TITLE</h1>
+            <h1>$title</h1>
             <div class="download-container">
               <a href="Outline.pdf" download>
                 <button class="download-button">
@@ -100,7 +100,6 @@ jobs:
           EOF
           
           rm outline_temp.html
-          rm title.txt
 
       - name: Commit and push changes
         run: |
