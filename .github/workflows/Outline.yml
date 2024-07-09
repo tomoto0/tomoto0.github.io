@@ -25,28 +25,30 @@ jobs:
       - name: Install pandoc
         run: sudo apt-get install -y pandoc
 
-      - name: Convert LaTeX to HTML
+      - name: Extract title and convert LaTeX to HTML
         run: |
+          # Extract title from LaTeX file
+          TITLE=$(sed -n 's/.*\\title{\(.*\)\\break}/\1/p' ./Outline/Outline.tex)
+          
+          # Remove title from LaTeX file
+          sed -i '/\\title{.*\\break}/d' ./Outline/Outline.tex
+          
+          # Convert LaTeX to HTML
           pandoc ./Outline/Outline.tex -o outline_temp.html \
             --standalone \
             --mathjax \
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments
 
-      - name: Extract title from LaTeX
-        run: |
-          title=$(grep -oP '\\\\title\{(.*?)(\\\\break)?\{(.*?)\}' ./Outline/Outline.tex | sed 's/\\title{\(.*\)}/\1/g' | sed 's/\\break//g' | tr -d '{}')
-          echo "extracted_title=\"$title\"" >> $GITHUB_ENV
-
       - name: Add additional CSS and scripts
         run: |
-          cat <<'EOF' > ./tomoto0.github.io/outline.html
+          cat <<EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>${{ env.extracted_title }}</title>
+            <title>Research Outline</title>
             <link rel="stylesheet" href="https://latex.vercel.app/style.css">
             <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
             <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -73,7 +75,7 @@ jobs:
             </style>
           </head>
           <body class="latex-dark-auto">
-            <h1>${{ env.extracted_title }}</h1>
+            <h1>${TITLE}</h1>
             <div class="download-container">
               <a href="Outline.pdf" download>
                 <button class="download-button">
@@ -85,7 +87,7 @@ jobs:
           
           cat outline_temp.html >> ./tomoto0.github.io/outline.html
           
-          cat <<'EOF' >> ./tomoto0.github.io/outline.html
+          cat <<EOF >> ./tomoto0.github.io/outline.html
           <script>
             MathJax = {
               tex: {
