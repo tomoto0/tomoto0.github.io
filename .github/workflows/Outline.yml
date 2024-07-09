@@ -48,17 +48,15 @@ jobs:
             <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
             <style>
               .download-button-container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
+                text-align: center;
+                margin-top: 20px; /* タイトルからの距離を調整 */
               }
             </style>
           </head>
           <body class="latex-dark-auto">
             <div class="download-button-container">
               <a href="Outline.pdf" download>
-                <button class="w3-button w3-light-grey w3-padding-large w3-margin-top">
+                <button class="w3-button w3-light-grey w3-padding-large">
                   <i class="fa fa-download"></i> Download Outline
                 </button>
               </a>
