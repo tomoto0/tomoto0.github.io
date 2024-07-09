@@ -46,6 +46,11 @@ jobs:
             <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
             <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+            <a href="Outline.pdf" download>
+              <button class="w3-button w3-light-grey w3-padding-large w3-margin-top">
+                <i class="fa fa-download"></i> Download Resume
+              </button>
+            </a>
           </head>
           <body class="latex-dark-auto">
           EOF
