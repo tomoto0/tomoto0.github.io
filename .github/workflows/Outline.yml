@@ -25,23 +25,23 @@ jobs:
       - name: Install pandoc
         run: sudo apt-get install -y pandoc
 
-      - name: Extract title and convert LaTeX to HTML
+      - name: Remove LaTeX title and get title text
         run: |
-          # Extract title from LaTeX file
-          TITLE=$(sed -n 's/.*\\title{\(.*\)\\break}/\1/p' ./Outline/Outline.tex)
-          
-          # Remove title from LaTeX file
-          sed -i '/\\title{.*\\break}/d' ./Outline/Outline.tex
-          
-          # Convert LaTeX to HTML
+          TITLE=$(grep -oP '\\title{\K.*(?=\\break}' ./Outline/Outline.tex)
+          sed -i '/\\title{.*}/d' ./Outline/Outline.tex
+          echo $TITLE > title.txt
+
+      - name: Convert LaTeX to HTML
+        run: |
           pandoc ./Outline/Outline.tex -o outline_temp.html \
             --standalone \
             --mathjax \
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments
 
-      - name: Add additional CSS and scripts
+      - name: Add additional CSS and scripts with Title
         run: |
+          TITLE=$(cat title.txt)
           cat <<EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
@@ -75,7 +75,7 @@ jobs:
             </style>
           </head>
           <body class="latex-dark-auto">
-            <h1>${TITLE}</h1>
+            <h1>\$TITLE</h1>
             <div class="download-container">
               <a href="Outline.pdf" download>
                 <button class="download-button">
@@ -87,7 +87,7 @@ jobs:
           
           cat outline_temp.html >> ./tomoto0.github.io/outline.html
           
-          cat <<EOF >> ./tomoto0.github.io/outline.html
+          cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
             MathJax = {
               tex: {
@@ -100,6 +100,7 @@ jobs:
           EOF
           
           rm outline_temp.html
+          rm title.txt
 
       - name: Commit and push changes
         run: |
