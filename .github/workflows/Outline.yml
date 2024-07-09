@@ -33,23 +33,20 @@ jobs:
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments
 
-      - name: Extract title from LaTeX file
-        id: extract-title
+      - name: Extract title from LaTeX
         run: |
-          TITLE=$(grep -oP '(?<=\\title{)(.*?)(?=})' ./Outline/Outline.tex)
-          echo "::set-output name=title::$TITLE"
+          title=$(grep -oP '\\\\title\{(.*?)(\\\\break)?\{(.*?)\}' ./Outline/Outline.tex | sed 's/\\title{\(.*\)}/\1/g' | sed 's/\\break//g' | tr -d '{}')
+          echo "extracted_title=\"$title\"" >> $GITHUB_ENV
 
       - name: Add additional CSS and scripts
         run: |
-          TITLE="${{ steps.extract-title.outputs.title }}"
-          
-          cat <<EOF > ./tomoto0.github.io/outline.html
+          cat <<'EOF' > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Research Outline</title>
+            <title>${{ env.extracted_title }}</title>
             <link rel="stylesheet" href="https://latex.vercel.app/style.css">
             <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
             <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -76,7 +73,7 @@ jobs:
             </style>
           </head>
           <body class="latex-dark-auto">
-            <h1>$TITLE</h1>
+            <h1>${{ env.extracted_title }}</h1>
             <div class="download-container">
               <a href="Outline.pdf" download>
                 <button class="download-button">
@@ -85,9 +82,9 @@ jobs:
               </a>
             </div>
           EOF
-
+          
           cat outline_temp.html >> ./tomoto0.github.io/outline.html
-
+          
           cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
             MathJax = {
@@ -99,7 +96,7 @@ jobs:
           </body>
           </html>
           EOF
-
+          
           rm outline_temp.html
 
       - name: Commit and push changes
