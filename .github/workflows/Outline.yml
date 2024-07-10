@@ -85,7 +85,7 @@ jobs:
             <div class="download-container">
               <a href="Outline.pdf" download>
                 <button class="download-button">
-                  <i class="fa fa-download"></i> Download Outline
+                  <i class="fa fa-download"></i> Download PDF
                 </button>
               </a>
             </div>
