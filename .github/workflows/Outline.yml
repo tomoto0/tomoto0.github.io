@@ -1,11 +1,4 @@
 name: Convert LaTeX to HTML
-  run: |
-    pandoc ./Outline/Outline.tex -o outline_temp.html \
-      --standalone \
-      --mathjax \
-      --css=https://latex.vercel.app/style.css \
-      --highlight-style=pygments \
-      --lua-filter=custom-filter.lua
 on:
   push:
     branches:
@@ -37,7 +30,8 @@ jobs:
             --standalone \
             --mathjax \
             --css=https://latex.vercel.app/style.css \
-            --highlight-style=pygments
+            --highlight-style=pygments \
+            --lua-filter=./Outline/custom-filter.lua
 
       - name: Add additional CSS and scripts
         run: |
