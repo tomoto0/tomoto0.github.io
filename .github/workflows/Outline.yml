@@ -25,6 +25,12 @@ jobs:
       - name: Install pandoc
         run: sudo apt-get install -y pandoc
 
+      - name: Remove LaTeX title and get title text
+        run: |
+          TITLE=$(sed -n 's/\\title{\(.*\)\\break}/\1/p' ./Outline/Outline.tex)
+          sed -i '/\\title{.*}/d' ./Outline/Outline.tex
+          echo "$TITLE" > title.txt
+
       - name: Convert LaTeX to HTML
         run: |
           pandoc ./Outline/Outline.tex -o outline_temp.html \
@@ -33,9 +39,16 @@ jobs:
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments
 
-      - name: Add additional CSS and scripts
+      - name: Insert title and generate final HTML
         run: |
-          cat <<'EOF' > ./tomoto0.github.io/outline.html
+          TITLE=$(cat title.txt)
+          sed -i "1s;^;<h1>${TITLE}</h1>\n;" outline_temp.html
+          cat outline_temp.html > ./tomoto0.github.io/outline.html
+
+      - name: Add additional CSS and scripts with Title
+        run: |
+          TITLE=$(cat title.txt)
+          cat <<EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -68,6 +81,7 @@ jobs:
             </style>
           </head>
           <body class="latex-dark-auto">
+            <h1>${TITLE}</h1>
             <div class="download-container">
               <a href="Outline.pdf" download>
                 <button class="download-button">
@@ -92,6 +106,7 @@ jobs:
           EOF
           
           rm outline_temp.html
+          rm title.txt
 
       - name: Commit and push changes
         run: |
