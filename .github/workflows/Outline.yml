@@ -33,16 +33,22 @@ jobs:
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments
 
+      - name: Extract LaTeX title
+        id: extract_title
+        run: |
+          title=$(grep -oP '(?<=\\title\{).*(?=\})' ./Outline/Outline.tex || echo "Research Outline")
+          echo "::set-output name=title::$title"
+
       - name: Add additional CSS and scripts
         run: |
-          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{\(.*\)}/\1/')
+          TITLE="${{ steps.extract_title.outputs.title }}"
           cat <<EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>$title</title>
+            <title>${TITLE}</title>
             <link rel="stylesheet" href="https://latex.vercel.app/style.css">
             <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
             <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -69,7 +75,7 @@ jobs:
             </style>
           </head>
           <body class="latex-dark-auto">
-            <h1>$title</h1>
+            <h1>${TITLE}</h1>
             <div class="download-container">
               <a href="Outline.pdf" download>
                 <button class="download-button">
@@ -79,7 +85,7 @@ jobs:
             </div>
           EOF
           
-          sed '1,/<body/d' outline_temp.html >> ./tomoto0.github.io/outline.html
+          cat outline_temp.html >> ./tomoto0.github.io/outline.html
           
           cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
