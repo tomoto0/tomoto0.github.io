@@ -5,7 +5,7 @@ name: Convert LaTeX to HTML
       --mathjax \
       --css=https://latex.vercel.app/style.css \
       --highlight-style=pygments \
-      --lua-filter=./Outline/custom-filter.lua
+      --lua-filter=custom-filter.lua
 on:
   push:
     branches:
