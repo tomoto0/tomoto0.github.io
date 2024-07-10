@@ -35,14 +35,13 @@ jobs:
 
       - name: Add additional CSS and scripts
         run: |
-          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{\(.*\)}/\1/')
-          cat <<EOF > ./tomoto0.github.io/outline.html
+          cat <<'EOF' > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>$title</title>
+            <title>Research Outline</title>
             <link rel="stylesheet" href="https://latex.vercel.app/style.css">
             <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
             <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -69,7 +68,6 @@ jobs:
             </style>
           </head>
           <body class="latex-dark-auto">
-            <h1>$title</h1>
             <div class="download-container">
               <a href="Outline.pdf" download>
                 <button class="download-button">
@@ -79,8 +77,7 @@ jobs:
             </div>
           EOF
           
-          # Remove the title from the body and add the rest of the content
-          sed '1,/<body/d' outline_temp.html | sed '/<h1 class="title">/,/<\/h1>/d' >> ./tomoto0.github.io/outline.html
+          cat outline_temp.html >> ./tomoto0.github.io/outline.html
           
           cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
