@@ -32,6 +32,7 @@ jobs:
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments \
             --lua-filter=./Outline/custom-filter.lua
+            --toc
 
       - name: Add additional CSS and scripts
         run: |
