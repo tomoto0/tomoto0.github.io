@@ -81,11 +81,7 @@ jobs:
           
           # Remove the title from the body and add the rest of the content
           sed '1,/<body/d' outline_temp.html | sed '/<h1 class="title">/,/<\/h1>/d' >> ./tomoto0.github.io/outline.html
-
-
-
-
-          sed -n '/<body/,/<\/body>/p' outline_temp.html | sed '1d;$d' | sed '/<header id="title-block-header">/,/<\/header>/d' |　sed '1s/^/<h1>Introduction<\/h1>\n/' >> ./tomoto0.github.io/outline.html
+          
           cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
             MathJax = {
