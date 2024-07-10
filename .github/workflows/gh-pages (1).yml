@@ -15,58 +15,65 @@ jobs:
         with:
           path: current-repo
           token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Checkout Outline repository
         uses: actions/checkout@v3
         with:
           repository: tomoto0/Outline
           path: outline-repo
           token: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: Cache LaTeX packages
+        uses: actions/cache@v2
+        with:
+          path: /usr/local/share/texmf
+          key: ${{ runner.os }}-texmf-${{ hashFiles('**/Outline.tex') }}
       - name: Install LaTeX packages
         run: |
-          apt-get update && apt-get install -y texlive-full
-
+          apt-get update && apt-get install -y \
+          texlive-latex-base \
+          texlive-latex-extra \
+          texlive-fonts-recommended \
+          texlive-bibtex-extra
       - name: Build PDF file
         run: |
-          if [ -d "outline-repo" ]; then
-            cd outline-repo
-            pdflatex -interaction=nonstopmode Outline.tex
-            bibtex Outline  # 参考文献のためにbibtexを実行
-            pdflatex -interaction=nonstopmode Outline.tex
-            pdflatex -interaction=nonstopmode Outline.tex
-            mkdir -p ../current-repo/docs
-            cp Outline.pdf ../current-repo/docs/
-          else
-            echo "Error: outline-repo directory not found."
+          if [ ! -d "outline-repo" ]; then
+            echo "Error: outline-repo directory not found. Ensure the repository checkout was successful."
             exit 1
           fi
-
+          cd outline-repo
+          pdflatex -interaction=nonstopmode Outline.tex
+          bibtex Outline
+          pdflatex -interaction=nonstopmode Outline.tex
+          pdflatex -interaction=nonstopmode Outline.tex
+          mkdir -p ../current-repo/docs
+          cp Outline.pdf ../current-repo/docs/
       - name: List contents of docs directory
         run: |
           ls -la current-repo/docs
-
       - name: Checkout main branch
         uses: actions/checkout@v3
         with:
           ref: main
           path: main-repo
           token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Copy PDF to main branch
         run: |
           mkdir -p main-repo/docs
           cp current-repo/docs/Outline.pdf main-repo/docs/
-
       - name: Commit and push PDF to main branch
+        env:
+          GIT_USER_EMAIL: ${{ secrets.tomoto@github.com }}
+          GIT_USER_NAME: ${{ secrets.Tomoto Masuda }}
         run: |
           cd main-repo
-          git config --global user.email "you@example.com"
-          git config --global user.name "Your Name"
+          git config --global user.email "$GIT_USER_EMAIL"
+          git config --global user.name "$GIT_USER_NAME"
           git add docs/Outline.pdf
-          git commit -m "Add generated PDF to docs"
-          git push origin main
-
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Add generated PDF to docs"
+            git push origin main
+          fi
       - name: Check LaTeX log
         if: failure()
         run: |
