@@ -25,12 +25,6 @@ jobs:
       - name: Install pandoc
         run: sudo apt-get install -y pandoc
 
-      - name: Remove LaTeX title and get title text
-        run: |
-          TITLE=$(sed -n 's/\\title{\(.*\)\\break}/\1/p' ./Outline/Outline.tex)
-          sed -i '/\\title{.*}/d' ./Outline/Outline.tex
-          echo "$TITLE" > title.txt
-
       - name: Convert LaTeX to HTML
         run: |
           pandoc ./Outline/Outline.tex -o outline_temp.html \
@@ -39,22 +33,16 @@ jobs:
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments
 
-      - name: Insert title and generate final HTML
+      - name: Add additional CSS and scripts
         run: |
-          TITLE=$(cat title.txt)
-          sed -i "1s;^;<h1>${TITLE}</h1>\n;" outline_temp.html
-          cat outline_temp.html > ./tomoto0.github.io/outline.html
-
-      - name: Add additional CSS and scripts with Title
-        run: |
-          TITLE=$(cat title.txt)
+          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{\(.*\)}/\1/')
           cat <<EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Research Outline</title>
+            <title>$title</title>
             <link rel="stylesheet" href="https://latex.vercel.app/style.css">
             <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
             <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -81,17 +69,18 @@ jobs:
             </style>
           </head>
           <body class="latex-dark-auto">
-            <h1>${TITLE}</h1>
+            <h1>$title</h1>
             <div class="download-container">
               <a href="Outline.pdf" download>
                 <button class="download-button">
-                  <i class="fa fa-download"></i> Download PDF
+                  <i class="fa fa-download"></i> Download Outline
                 </button>
               </a>
             </div>
           EOF
           
-          cat outline_temp.html >> ./tomoto0.github.io/outline.html
+          # Remove the title from the body and add the rest of the content
+          sed '1,/<body/d' outline_temp.html | sed '/<h1 class="title">/,/<\/h1>/d' >> ./tomoto0.github.io/outline.html
           
           cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
@@ -106,7 +95,6 @@ jobs:
           EOF
           
           rm outline_temp.html
-          rm title.txt
 
       - name: Commit and push changes
         run: |
