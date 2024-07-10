@@ -32,7 +32,10 @@ jobs:
           texlive-latex-base \
           texlive-latex-extra \
           texlive-fonts-recommended \
-          texlive-bibtex-extra
+          texlive-bibtex-extra \
+          texlive-science \
+          texlive-publishers \
+          cm-super
       - name: Build PDF file
         run: |
           if [ ! -d "outline-repo" ]; then
