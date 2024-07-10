@@ -1,5 +1,11 @@
 name: Convert LaTeX to HTML
-
+  run: |
+    pandoc ./Outline/Outline.tex -o outline_temp.html \
+      --standalone \
+      --mathjax \
+      --css=https://latex.vercel.app/style.css \
+      --highlight-style=pygments \
+      --lua-filter=custom-filter.lua
 on:
   push:
     branches:
@@ -73,7 +79,7 @@ jobs:
             <div class="download-container">
               <a href="Outline.pdf" download>
                 <button class="download-button">
-                  <i class="fa fa-download"></i> Download PDF
+                  <i class="fa fa-download"></i> Download Outline
                 </button>
               </a>
             </div>
