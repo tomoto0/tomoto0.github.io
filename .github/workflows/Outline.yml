@@ -71,7 +71,7 @@ jobs:
           <body class="latex-dark-auto">
             <h1>$title</h1>
             <div class="download-container">
-              <a href="Outline (6).pdf" download>
+              <a href="Outline (7).pdf" download>
                 <button class="download-button">
                   <i class="fa fa-download"></i> Download PDF
                 </button>
