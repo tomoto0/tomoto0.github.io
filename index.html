@@ -1,95 +1,377 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Impact of the 2011 Tohoku Earthquake and Tsunami on the Gender Gap in Income in Fukushima Prefecture</title>
-    <link rel="stylesheet" href="https://latex.vercel.app/style.css">
-    <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            background-color: #fffff8;
-            color: #333;
-        }
-        article {
-            max-width: 80ch;
-            width: 100%;
-            padding: 2rem;
-            background-color: #fffff8;
-        }
-        .theorem, .proof {
-            margin: 1rem 0;
-            padding: 0.5rem;
-            border-left: 3px solid #4a4a4a;
-            background-color: #f8f8f8;
-        }
-    </style>
-</head>
-<body class="latex-dark-auto">
-    <article class="indent-pars">
-        <h1>The Impact of the 2011 Tohoku Earthquake and Tsunami on the Gender Gap in Income in Fukushima Prefecture</h1>
-        
-        <p class="author">[Author Name] <br> [Date]</p>
+<title>Tomoto Masuda</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="nav_bar.css">
 
-        <div class="abstract">
-            <h2>Abstract</h2>
-            <p>This study examines the impact of the 2011 Tohoku earthquake and tsunami on the gender gap in income in Fukushima Prefecture. Using a difference-in-differences approach, we compare the change in income for men and women in Fukushima Prefecture before and after the disaster, relative to a control group of men and women in a neighboring prefecture that was not affected by the disaster. Our results suggest that the disaster exacerbated the existing gender gap in income in Fukushima Prefecture, with women experiencing a disproportionate decline in income and employment outcomes. We discuss the implications of our findings for policymakers and highlight the need for targeted interventions to support vulnerable populations, particularly women, in the aftermath of natural disasters.</p>
+<style>
+body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
+.w3-row-padding img {margin-bottom: 12px}
+.bgimg {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url('Train_vivid.JPG');
+  min-height: 100%;
+}
+</style>
+</head>
+<body>
+
+<!-- Links (sit on top) -->
+
+
+ <!--
+
+<div class="w3-row w3-padding w3-black">
+
+
+ -->
+
+  
+  <div class="w3-row w3-padding w3-black" style="z-index: 999;">
+  <div class="navbar">
+
+    <a href="research_page.html" class="navbar-item">Research</a>
+    
+    <a href="outline.html" class="navbar-item">Outline</a>
+    
+    <a href="cv_page.html" class="navbar-item">CV</a>
+
+    <a href="contact_page.html" class="navbar-item">Contact</a>
+
+  </div>
+
+</div>
+
+
+ <!--
+
+<div class="w3-top">
+  <div class="w3-row w3-padding w3-black">
+    <div class="w3-col s3">
+      <a href="research_page.html" class="text-blue-500 hover:underline">Research</a>
+    </div>
+    <div class="w3-col s3">
+      <a href="cv_page.html" class="text-blue-500 hover:underline">CV</a>
+    </div>
+    <div class="w3-col s3">
+      <a href="https://tomoto.azurewebsites.net/" class="text-blue-500 hover:underline" target="_blank">Blog</a>
+    </div>
+    <div class="w3-col s3">
+      <a href="contact_page.html" class="text-blue-500 hover:underline">Contact</a>
+    </div>
+  </div>
+</div>
+
+ -->
+
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <!-- other head elements -->
+        </head>
+        
+ <!--
+        <div class="w3-top">
+          <div class="w3-row w3-padding w3-black">
+            <div class="w3-col s3">
+              <a class="w3-button w3-block w3-black" href="research_page.html">Research</a>
+            </div>
+            <div class="w3-col s3">
+              <a class="w3-button w3-block w3-black" href="cv_page.html">CV</a>
+            </div>
+            <div class="w3-col s3">
+              <a class="w3-button w3-block w3-black" href="https://tomoto.azurewebsites.net/" target="_blank">Blog</a>
+            </div>
+            <div class="w3-col s3">
+              <a class="w3-button w3-block w3-black" href="contact_page.html">Contact</a>
+            </div>
+          </div>
         </div>
 
-        <h2>Contents</h2>
-        <ol>
-            <li><a href="#introduction">Introduction</a></li>
-            <li><a href="#methods">Methods</a></li>
-            <li><a href="#results">Results</a></li>
-            <li><a href="#discussion">Discussion</a></li>
-            <li><a href="#conclusion">Conclusion</a></li>
-            <li><a href="#references">References</a></li>
-        </ol>
+<nav class="w3-sidebar w3-hide-medium w3-hide-small" style="width:40%; z-index: 998;"> 
+<div class="bgimg"></div>
+</nav>
 
-        <h2 id="introduction">Introduction</h2>
-        <p>The 2011 Tohoku earthquake and tsunami had a devastating impact on Fukushima Prefecture, causing widespread destruction and displacement. Women, in particular, were disproportionately affected by the disaster, with many losing their livelihoods and facing significant challenges in accessing basic necessities like healthcare and education. This study aims to examine the impact of the disaster on the gender gap in income in Fukushima Prefecture, using a difference-in-differences approach.</p>
+-->
 
-        <h2 id="methods">Methods</h2>
-        <p>We use data from the Japanese Ministry of Health, Labour and Welfare's Labour Force Survey to obtain information on income and employment outcomes for men and women in Fukushima Prefecture and a control group of men and women in a neighboring prefecture that was not affected by the disaster. We employ a difference-in-differences approach to compare the change in income for men and women in Fukushima Prefecture before and after the disaster, relative to the control group.</p>
+<!-- Sidebar with image -->
+<nav class="w3-sidebar w3-hide-medium w3-hide-small" style="width:40%; z-index: 1;">
+  
+  <div class="bgimg"></div>
+</nav>
 
-        <h2 id="results">Results</h2>
-        <p>Our results suggest that the disaster exacerbated the existing gender gap in income in Fukushima Prefecture, with women experiencing a disproportionate decline in income and employment outcomes. We find that the disaster had a significant and lasting impact on the gender gap in income, with women's income declining by 15% in the short-term and 20% in the long-term, relative to men's income.</p>
+<!-- Hidden Sidebar (reveals when clicked on menu icon)-->
+<nav class="w3-sidebar w3-black w3-animate-right w3-xxlarge" style="display:none;padding-top:150px;right:0;z-index:9998" id="mySidebar">
+  <a href="javascript:void(0)" onclick="closeNav()" class="w3-button w3-black w3-xxxlarge w3-display-topright" style="padding:0 12px;">
+    <i class="fa fa-remove"></i>
+  </a>
+  <div class="w3-bar-block w3-center">
+    <a href="#" class="w3-bar-item w3-button w3-text-grey w3-hover-black" onclick="closeNav()">Home</a>
+    <a href="#portfolio" class="w3-bar-item w3-button w3-text-grey w3-hover-black" onclick="closeNav()">Portfolio</a>
+    <a href="#about" class="w3-bar-item w3-button w3-text-grey w3-hover-black" onclick="closeNav()">About</a>
+    <a href="#contact" class="w3-bar-item w3-button w3-text-grey w3-hover-black" onclick="closeNav()">Contact</a>
+  </div>
+</nav>
 
-        <table class="col-1-l col-2-c col-3-r borders-custom">
-            <caption>Table 1: Impact of the 2011 Tohoku Earthquake and Tsunami on the Gender Gap in Income in Fukushima Prefecture</caption>
-            <tr class="border-bottom-thick">
-                <th>Variable</th>
-                <th>Short-term Effect</th>
-                <th>Long-term Effect</th>
-            </tr>
-            <tr class="border-bottom-thin">
-                <td>Women's Income</td>
-                <td>-15%</td>
-                <td>-20%</td>
-            </tr>
-            <tr>
-                <td>Men's Income</td>
-                <td>-5%</td>
-                <td>-10%</td>
-            </tr>
-        </table>
+<!-- Page Content -->
+<div class="w3-main w3-padding-large" style="margin-left:40%">
 
-        <h2 id="discussion">Discussion</h2>
-        <p>Our findings suggest that the 2011 Tohoku earthquake and tsunami had a disproportionate impact on women's income and employment outcomes in Fukushima Prefecture. We discuss the implications of our findings for policymakers and highlight the need for targeted interventions to support vulnerable populations, particularly women, in the aftermath of natural disasters.</p>
+  <!-- Menu icon to open sidebar -->
 
-        <h2 id="conclusion">Conclusion</h2>
-        <p>This study provides new insights into the impact of the 2011 Tohoku earthquake and tsunami on the gender gap in income in Fukushima Prefecture. Our findings suggest that the disaster exacerbated the existing gender gap in income, with women experiencing a disproportionate decline in income and employment outcomes. We hope that our study will inform policymakers and contribute to the development of effective policies to support vulnerable populations, particularly women, in the aftermath of natural disasters.</p>
+<span class="w3-button w3-top w3-white w3-xxlarge w3-text-grey w3-hover-text-black" style="width:auto;right:0; z-index: 999; transform: scale(0.46, 0.46);" onclick="openNav()"><i class="fa fa-bars"></i></span>
 
-        <h2 id="references">References</h2>
-        <ol>
-            <li>[Reference 1]</li>
-            <li>[Reference 2]</li>
-        </ol>
+  <!-- Header -->
+  <header class="w3-container w3-center" style="padding:128px 16px" id="home">
+    <h1 class="w3-jumbo"><b>Tomoto Masuda</b></h1>
+    <p>PhD in Economics.</p>
 
-    </article>
+      <!-- 
+
+        <nav>
+            <ul class="flex space-x-4">
+                <li><a href="research_page.html" class="text-blue-500 hover:underline">Research</a></li>
+                <li><a href="cv_page.html" class="text-blue-500 hover:underline">CV</a></li>
+                <li><a href="https://tomoto.azurewebsites.net/" class="text-blue-500 hover:underline" target="_blank">Blog</a></li>
+                <li><a href="contact_page.html" class="text-blue-500 hover:underline">Contact</a></li>
+            </ul>
+        </nav>
+
+ -->
+
+
+      <!-- 
+    
+    <img src="Houses_vivid.JPG" class="responsive-img">
+
+<style>
+
+@media (max-width: 600px) {
+  .responsive-img { 
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (min-width: 600px) {
+  .responsive-img {
+    width: auto; 
+    max-width: 60%;
+    height: 100vh; 
+  }
+}
+</style>
+
+ -->
+    
+    
+
+    <img src="Train_vivid.JPG" class="w3-image w3-hide-large w3-hide-small w3-round" style="display:block;width:60%;margin:auto;">
+    <img src="Train_vivid.JPG" class="w3-image w3-hide-large w3-hide-medium w3-round" width="1000" height="1333">
+
+    <a href="Outline (4).pdf" download>
+  <button class="w3-button w3-light-grey w3-padding-large w3-margin-top">
+    <i class="fa fa-download"></i> Download Resume
+  </button>
+</a>
+
+  </header>
+
+  <!-- Portfolio Section -->
+  <div class="w3-padding-32 w3-content" id="portfolio">
+    <h2 class="w3-text-grey">My Portfolio</h2>
+    <hr class="w3-opacity">
+
+    <!-- Grid for photos -->
+    <div class="w3-row-padding" style="margin:0 -16px">
+      <div class="w3-half">
+        <img src="Houses_vivid.JPG" style="width:100%">
+        <img src="oldtown_vivid.JPG" style="width:100%">
+        <img src="Castleview_warm.JPG" style="width:100%">
+      </div>
+
+      <div class="w3-half">
+        <img src="portrait_mono.JPG" style="width:100%">
+        <img src="Seaview_vivid.JPG" style="width:100%">
+        <img src="Towerbridge_mono.JPG" style="width:100%">
+        <img src="Aerodrome_mono.JPG" style="width:100%">
+      </div>
+    <!-- End photo grid -->
+    </div>
+  <!-- End Portfolio Section -->
+  </div>
+
+  <!-- About Section -->
+  <div class="w3-content w3-justify w3-text-grey w3-padding-32" id="about">
+    <h2>About</h2>
+    <hr class="w3-opacity">
+    <p>PhD in Economics at University of Sussex. Strong theoretical and empirical analysis skills, well-developed IT skills in analysis of micro data and evaluation of economic/social impacts.
+    </p>
+    <h3 class="w3-padding-16">My Skills</h3>
+    <p class="w3-wide">Photography</p>
+    <div class="w3-light-grey">
+      <div class="w3-container w3-center w3-padding-small w3-dark-grey" style="width:95%">95%</div>
+    </div>
+    <p class="w3-wide">Web Design</p>
+    <div class="w3-light-grey">
+      <div class="w3-container w3-center w3-padding-small w3-dark-grey" style="width:85%">85%</div>
+    </div>
+    <p class="w3-wide">AI Engineering</p>
+    <div class="w3-light-grey">
+      <div class="w3-container w3-center w3-padding-small w3-dark-grey" style="width:80%">80%</div>
+    </div><br>
+
+    <div class="w3-row w3-center w3-dark-grey w3-padding-16 w3-section">
+      <div class="w3-quarter w3-section">
+        <span class="w3-xlarge">14+</span><br>
+        Partners
+      </div>
+      <div class="w3-quarter w3-section">
+        <span class="w3-xlarge">55+</span><br>
+        Projects Done
+      </div>
+      <div class="w3-quarter w3-section">
+        <span class="w3-xlarge">89+</span><br>
+        Happy Clients
+      </div>
+      <div class="w3-quarter w3-section">
+        <span class="w3-xlarge">150+</span><br>
+        Meetings
+      </div>
+    </div>
+
+    <button class="w3-button w3-light-grey w3-padding-large w3-section">
+      <i class="fa fa-download"></i> Download Resume
+    </button>
+
+    <!-- Testimonials -->
+    <h3 class="w3-padding-24">My Reputation</h3>
+    <img src="/w3images/avatar_smoke.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-text-black w3-margin-right">Chandler Bing.</span> Web Designer.</p>
+    <p>Tomoto is just awesome. I am so happy to have met him!</p><br>
+   
+    <img src="/w3images/bandmember.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-text-black w3-margin-right">Chris Fox.</span> CEO at Mighty Schools.</p>
+    <p>Tomoto saved us from a web disaster.</p><br>
+    
+    <img src="/w3images/avatar_g2.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-text-black w3-margin-right">Rebecca Flex.</span> CEO at ABC Company.</p>
+    <p>No one is better than Tomoto.</p><br>
+    
+    <!-- Grid for pricing tables -->
+    <h3 class="w3-padding-16">My Price</h3>
+    <div class="w3-row-padding" style="margin:0 -16px">
+      <div class="w3-half w3-margin-bottom">
+        <ul class="w3-ul w3-center w3-card w3-hover-shadow">
+          <li class="w3-dark-grey w3-xlarge w3-padding-32">Basic</li>
+          <li class="w3-padding-16">Web Design</li>
+          <li class="w3-padding-16">Photography</li>
+          <li class="w3-padding-16">5GB Storage</li>
+          <li class="w3-padding-16">AI Engineering Support</li>
+          <li class="w3-padding-16">
+            <h2>$ 10</h2>
+            <span class="w3-opacity">per month</span>
+          </li>
+          <li class="w3-light-grey w3-padding-24">
+            <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="w3-half">
+        <ul class="w3-ul w3-center w3-card w3-hover-shadow">
+          <li class="w3-black w3-xlarge w3-padding-32">Pro</li>
+          <li class="w3-padding-16">Web Design</li>
+          <li class="w3-padding-16">Photography</li>
+          <li class="w3-padding-16">50GB Storage</li>
+          <li class="w3-padding-16">Endless AI Engineering Support</li>
+          <li class="w3-padding-16">
+            <h2>$ 25</h2>
+            <span class="w3-opacity">per month</span>
+          </li>
+          <li class="w3-light-grey w3-padding-24">
+            <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
+          </li>
+        </ul>
+      </div>
+    <!-- End Grid/Pricing tables -->
+    </div>
+    
+  <!-- End About Section -->
+  </div>
+
+  <!-- Contact Section -->
+  <div class="w3-padding-32 w3-content w3-text-grey" id="contact" style="margin-bottom:64px">
+    <h2>Contact</h2>
+    <hr class="w3-opacity">
+
+    <div class="w3-section">
+      <p><i class="fa fa-map-marker fa-fw w3-xxlarge w3-margin-right"></i> Brighton, UK</p>
+      <p><i class="fa fa-phone fa-fw w3-xxlarge w3-margin-right"></i> Phone: +44 ＊**＊＊＊</p>
+      <p><i class="fa fa-envelope fa-fw w3-xxlarge w3-margin-right"> </i> Email: T.Masuda@sussex.ac.uk</p>
+    </div>
+    
+    <!-- Image -->
+    <img src="PhD in Economics.JPG" class="w3-image w3-greyscale" style="width:100%;margin:32px 0">
+
+
+
+
+    
+
+    <!-- 問い合わせフォーム -->
+
+    <p>Lets get in touch. Send me a message:</p>
+    <form action="/action_page.php" target="_blank">
+      <p><input class="w3-input w3-padding-16 w3-border" type="text" placeholder="Name" required name="Name"></p>
+      <p><input class="w3-input w3-padding-16 w3-border" type="text" placeholder="Email" required name="Email"></p>
+      <p><input class="w3-input w3-padding-16 w3-border" type="text" placeholder="Subject" required name="Subject"></p>
+      <p><input class="w3-input w3-padding-16 w3-border" type="text" placeholder="Message" required name="Message"></p>
+      <p>
+        <button class="w3-button w3-light-grey w3-padding-large" type="submit">
+          <i class="fa fa-paper-plane"></i> SEND MESSAGE
+        </button>
+      </p>
+    </form>
+  <!-- End Contact Section -->
+  </div>  
+
+
+
+  <!-- Footer -->
+  <footer class="w3-container w3-padding-64 w3-light-grey w3-center w3-opacity w3-xlarge" style="margin:-24px">
+    <i class="fa fa-facebook-official w3-hover-opacity"></i>
+    <i class="fa fa-instagram w3-hover-opacity"></i>
+    <i class="fa fa-snapchat w3-hover-opacity"></i>
+    <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+    <i class="fa fa-twitter w3-hover-opacity"></i>
+    <a href="https://www.linkedin.com/in/tomoto-masuda-6aa886277/" target="_blank" aria-hidden="true">
+  <i class="fa fa-linkedin w3-hover-opacity"></i>
+</a>
+    <p class="w3-medium">Powered by <a href="https://www.sussex.ac.uk/" target="_blank" class="w3-hover-text-green">University of Sussex</a></p>
+  
+  <!-- End footer -->
+  </footer>
+  
+<!-- END PAGE CONTENT -->
+</div>
+
+<script>
+// Open and close sidebar
+function openNav() {
+  document.getElementById("mySidebar").style.width = "60%";
+  document.getElementById("mySidebar").style.display = "block";
+}
+
+function closeNav() {
+  document.getElementById("mySidebar").style.display = "none";
+}
+</script>
+
 </body>
 </html>
