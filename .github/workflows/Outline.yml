@@ -37,7 +37,7 @@ jobs:
       - name: Add additional CSS and scripts
         run: |
           title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{\(.*\)}/\1/')
-          abstract=$(sed -n '/\\begin{abstract}/,/\\end{abstract}/p' ./Outline/Outline.tex | sed '1d;$d')
+          abstract=$(sed -n '/\\begin{abstract}/,/\\end{abstract}/p' ./Outline/Outline.tex | sed '1d;$d' | sed 's/\\noindent//')
           cat << EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
@@ -121,7 +121,7 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add outline.html
-          git commit -m 'Convert LaTeX to HTML with improved styling'
+          git commit -m 'Convert LaTeX to HTML with improved styling and full abstract'
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
