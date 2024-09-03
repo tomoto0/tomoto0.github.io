@@ -24,25 +24,17 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc
+          sudo apt-get install -y pandoc texlive texlive-latex-extra
 
-      - name: Install TeX Live
+      - name: Update TeX Live Manager
         run: |
-          sudo apt-get update
-          sudo apt-get install -y texlive-full
-          sudo apt-get install -y texlive-latex-extra
+          wget http://mirror.ctan.org/systems/texlive/tlnet/update-tlmgr-latest.sh
+          chmod +x update-tlmgr-latest.sh
+          sudo ./update-tlmgr-latest.sh -- --update
 
-      - name: Set up TeX Live path
+      - name: Set TeX Live repository and update
         run: |
-          echo "/usr/local/texlive/2024/bin/x86_64-linux" >> $GITHUB_PATH
-          echo "/usr/local/texlive/2023/bin/x86_64-linux" >> $GITHUB_PATH
-          echo "/usr/local/texlive/2022/bin/x86_64-linux" >> $GITHUB_PATH
-          echo "/usr/local/texlive/2021/bin/x86_64-linux" >> $GITHUB_PATH
-          source $HOME/.profile
-
-      - name: Install additional LaTeX packages
-        run: |
-          sudo tlmgr init-usertree
+          sudo tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet
           sudo tlmgr update --self
           sudo tlmgr install pgfplots subcaption caption geometry
 
