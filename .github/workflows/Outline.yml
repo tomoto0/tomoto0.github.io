@@ -80,13 +80,6 @@ jobs:
             margin-top: 10px;
             margin-bottom: 20px;
           }
-
-
-          .abstract-content {
-            margin-top: 10px;
-            margin-bottom: 20px;
-          }
-
           </style>
           </head>
           <body class="latex-dark-auto">
