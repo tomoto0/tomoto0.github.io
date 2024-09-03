@@ -29,132 +29,92 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-texlive-
 
-      - name: Install TeX Live
+      - name: Install TeX Live and additional tools
         if: steps.cache-texlive.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra
-
-      - name: Install additional tools
-        run: |
           sudo apt-get install -y pandoc
-          sudo apt-get install -y pdf2svg
-          sudo apt-get install -y poppler-utils
+          sudo apt-get install -y librsvg2-bin
 
-      - name: Convert complex figures to PDF
+      - name: Create Lua filter for TikZ conversion
         run: |
-          cd ./Outline
-          # ここで複雑な図表のみを含むLaTeXファイルを指定
-          pdflatex -interaction=nonstopmode -halt-on-error complex_figures.tex
-        continue-on-error: true
+          cat << EOF > tikz-to-svg.lua
+          local function tikz_to_svg(src, filetype, attr)
+            local tmp = os.tmpname()
+            local tmpdir = string.match(tmp, "^(.*[\\/])") or "."
+            local f = io.open(tmp .. ".tex", "w")
+            f:write("\\documentclass{standalone}\n\\usepackage{tikz}\n\\begin{document}\n")
+            f:write(src)
+            f:write("\n\\end{document}")
+            f:close()
+            os.execute(string.format("pdflatex -output-directory %s %s", tmpdir, tmp .. ".tex"))
+            os.execute(string.format("pdf2svg %s.pdf %s.svg", tmp, tmp))
+            local svg = io.open(tmp .. ".svg", "r")
+            local svgcontent = svg:read("*all")
+            svg:close()
+            os.remove(tmp .. ".tex")
+            os.remove(tmp .. ".pdf")
+            os.remove(tmp .. ".svg")
+            os.remove(tmp .. ".aux")
+            os.remove(tmp .. ".log")
+            return pandoc.RawBlock('html', svgcontent)
+          end
 
-      - name: Extract images from PDF
-        run: |
-          cd ./Outline
-          mkdir -p images
-          pdfimages -all complex_figures.pdf images/image
-
-      - name: Convert PDF to SVG
-        run: |
-          cd ./Outline
-          pdf2svg complex_figures.pdf complex_figures.svg all
+          return {
+            {
+              CodeBlock = function(el)
+                if el.classes[1] == "tikz" then
+                  return tikz_to_svg(el.text, "svg", el.attr)
+                end
+              end,
+            }
+          }
+          EOF
 
       - name: Convert LaTeX to HTML
         run: |
-          pandoc ./Outline/Outline.tex -o outline_temp.html \
+          pandoc ./Outline/Outline.tex -o ./tomoto0.github.io/outline.html \
             --standalone \
             --mathjax \
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments \
-            --lua-filter=./Outline/custom-filter.lua
+            --lua-filter=./Outline/custom-filter.lua \
+            --lua-filter=tikz-to-svg.lua
 
       - name: Add additional CSS and scripts
         run: |
           title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{$$.*$$}/\1/')
-          cat <<EOF > ./tomoto0.github.io/outline.html
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>$title</title>
-            <link rel="stylesheet" href="https://latex.vercel.app/style.css">
-            <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
-            <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
-            <style>
-              .download-container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 20px 0;
+          sed -i "s/<title>.*<\/title>/<title>$title<\/title>/" ./tomoto0.github.io/outline.html
+          sed -i '/<style>/r'<(cat << EOF
+            .latex-dark-auto {
+              --bg-color: #ffffff;
+              --text-color: #333333;
+            }
+            @media (prefers-color-scheme: dark) {
+              .latex-dark-auto {
+                --bg-color: #222222;
+                --text-color: #dddddd;
               }
-              .download-button {
-                background-color: #f1f1f1;
-                color: #000;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 16px;
-              }
-              .download-button:hover {
-                background-color: #ddd;
-              }
-              .svg-figure {
-                width: 100%;
-                max-width: 800px;
-                margin: 20px auto;
-              }
-            </style>
-          </head>
-          <body class="latex-dark-auto">
-            <h1>$title</h1>
-            <div class="download-container">
-              <a href="complex_figures.pdf" download>
-                <button class="download-button">
-                  <i class="fa fa-download"></i> Download PDF
-                </button>
-              </a>
-            </div>
+            }
+            body {
+              background-color: var(--bg-color);
+              color: var(--text-color);
+            }
+            svg {
+              max-width: 100%;
+              height: auto;
+            }
           EOF
-          
-          # Remove the title from the body and add the rest of the content
-          sed '1,/<body/d' outline_temp.html | sed '/<h1 class="title">/,/<\/h1>/d' >> ./tomoto0.github.io/outline.html
-          
-          # Insert SVG figures
-          for svg in ./Outline/*.svg; do
-            echo "<div class='svg-figure'>" >> ./tomoto0.github.io/outline.html
-            cat "$svg" >> ./tomoto0.github.io/outline.html
-            echo "</div>" >> ./tomoto0.github.io/outline.html
-          done
-          
-          cat <<'EOF' >> ./tomoto0.github.io/outline.html
-          <script>
-            MathJax = {
-              tex: {
-                inlineMath: [['$', '$'],],
-              },
-            };
-          </script>
-          </body>
-          </html>
-          EOF
-          
-          rm outline_temp.html
-
-      - name: Copy PDF and images
-        run: |
-          cp ./Outline/complex_figures.pdf ./tomoto0.github.io/
-          cp -r ./Outline/images ./tomoto0.github.io/
+          ) ./tomoto0.github.io/outline.html
 
       - name: Commit and push changes
         run: |
           cd ./tomoto0.github.io
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add outline.html complex_figures.pdf images
-          git commit -m 'Convert LaTeX to HTML with improved styling and figures'
+          git add outline.html
+          git commit -m 'Convert LaTeX to HTML with improved styling and embedded SVG figures'
           git push
 
     env:
