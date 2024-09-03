@@ -21,12 +21,15 @@ jobs:
           repository: tomoto0/tomoto0.github.io
           path: tomoto0.github.io
 
-      - name: Install updated Pandoc and additional dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended
-          wget https://github.com/jgm/pandoc/releases/download/3.1.6/pandoc-3.1.6-1-amd64.deb
-          sudo dpkg -i pandoc-3.1.6-1-amd64.deb
+          sudo apt-get install -y pandoc texlive-latex-extra texlive-fonts-recommended
+
+      - name: Install additional LaTeX packages
+        run: |
+          sudo tlmgr init-usertree
+          sudo tlmgr install pgfplots subcaption caption geometry
 
       - name: Convert LaTeX to HTML
         run: |
@@ -36,14 +39,18 @@ jobs:
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments \
             --lua-filter=./Outline/custom-filter.lua \
-            --from=latex+raw_tex \
-            --to=html5 \
-            --embed-resources \
-            --standalone \
-            --table-of-contents \
-            --number-sections \
-            --wrap=none \
             --extract-media=extracted-media
+
+      - name: Process LaTeX figures and tables
+        run: |
+          for file in ./Outline/*.tex; do
+            if [[ "$file" != "./Outline/Outline.tex" ]]; then
+              filename=$(basename -- "$file")
+              filename="${filename%.*}"
+              pdflatex -output-directory=./extracted-media "$file"
+              pdftocairo -svg "./extracted-media/${filename}.pdf" "./extracted-media/${filename}.svg"
+            fi
+          done
 
       - name: Add additional CSS and scripts
         run: |
@@ -78,26 +85,17 @@ jobs:
               .download-button:hover {
                 background-color: #ddd;
               }
-              table {
-                border-collapse: collapse;
-                width: 100%;
-                margin-bottom: 1em;
-              }
-              th, td {
-                border: 1px solid #ddd;
-                padding: 8px;
-                text-align: left;
-              }
-              th {
-                background-color: #f2f2f2;
-              }
               figure {
                 text-align: center;
-                margin: 1em 0;
+                margin: 20px 0;
+              }
+              figure img {
+                max-width: 100%;
+                height: auto;
               }
               figcaption {
+                margin-top: 10px;
                 font-style: italic;
-                margin-top: 0.5em;
               }
             </style>
           </head>
@@ -115,28 +113,16 @@ jobs:
           # Remove the title from the body and add the rest of the content
           sed '1,/<body/d' outline_temp.html | sed '/<h1 class="title">/,/<\/h1>/d' >> ./tomoto0.github.io/outline.html
           
+          # Replace figure references with actual SVG images
+          sed -i 's/<img src="\(.*\)\.pdf" /<img src="\1.svg" /g' ./tomoto0.github.io/outline.html
+          
           cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
             MathJax = {
               tex: {
                 inlineMath: [['$', '$'],],
-                displayMath: [['$$', '$$']],
-                processEscapes: true,
-                processEnvironments: true
               },
-              options: {
-                ignoreHtmlClass: 'tex2jax_ignore|editor-rich-text'
-              },
-              svg: {
-                fontCache: 'global'
-              }
             };
-          </script>
-          <script>
-            // Reinitialize Prism.js after the content is loaded
-            document.addEventListener('DOMContentLoaded', (event) => {
-              Prism.highlightAll();
-            });
           </script>
           </body>
           </html>
@@ -146,18 +132,15 @@ jobs:
 
       - name: Copy extracted media
         run: |
-          if [ -d "extracted-media" ]; then
-            cp -R extracted-media/* ./tomoto0.github.io/
-          fi
+          cp -R ./extracted-media ./tomoto0.github.io/
 
       - name: Commit and push changes
         run: |
           cd ./tomoto0.github.io
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add outline.html
-          git add extracted-media/* || true
-          git commit -m 'Convert LaTeX to HTML with improved styling and media support'
+          git add outline.html extracted-media
+          git commit -m 'Convert LaTeX to HTML with improved styling and figures'
           git push
     env:
       GITHUB_TOKEN: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
