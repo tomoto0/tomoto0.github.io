@@ -21,44 +21,8 @@ jobs:
           repository: tomoto0/tomoto0.github.io
           path: tomoto0.github.io
 
-      - name: Install basic dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pandoc wget
-
-      - name: Install TeX Live
-        run: |
-          wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
-          tar -xzf install-tl-unx.tar.gz
-          INSTALL_TL_DIR=$(find . -maxdepth 1 -type d -name "install-tl-*" | head -n 1)
-          if [ -z "$INSTALL_TL_DIR" ]; then
-            echo "TeX Live installation directory not found"
-            exit 1
-          fi
-          cd "$INSTALL_TL_DIR"
-          sudo perl install-tl --profile=../../Outline/texlive.profile
-
-      - name: Update PATH
-        run: |
-          echo "/usr/local/texlive/2024/bin/x86_64-linux" >> $GITHUB_PATH
-
-      - name: Verify TeX Live Installation
-        run: |
-          which pdflatex
-          pdflatex --version
-          which tlmgr
-          tlmgr --version
-
-      - name: Check PATH
-        run: echo $PATH
-
-      - name: Check TeX Live installation directory
-        run: ls -R /usr/local/texlive/2024
-
-      - name: Install additional TeX Live packages
-        run: |
-          sudo tlmgr update --self
-          sudo tlmgr install pgfplots caption geometry subcaption
+      - name: Install pandoc
+        run: sudo apt-get install -y pandoc
 
       - name: Convert LaTeX to HTML
         run: |
@@ -67,26 +31,11 @@ jobs:
             --mathjax \
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments \
-            --lua-filter=./Outline/custom-filter.lua \
-            --extract-media=extracted-media
-
-      - name: Process LaTeX figures and tables
-        run: |
-          mkdir -p ./extracted-media
-          for file in ./Outline/*.tex; do
-            if [[ "$file" != "./Outline/Outline.tex" ]]; then
-              filename=$(basename -- "$file")
-              filename="${filename%.*}"
-              pdflatex -output-directory=./extracted-media -interaction=nonstopmode "$file"
-              if [ -f "./extracted-media/${filename}.pdf" ]; then
-                pdftocairo -svg "./extracted-media/${filename}.pdf" "./extracted-media/${filename}.svg"
-              fi
-            fi
-          done
+            --lua-filter=./Outline/custom-filter.lua
 
       - name: Add additional CSS and scripts
         run: |
-          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{$$.*$$}/\1/')
+          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{\(.*\)}/\1/')
           cat <<EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
@@ -117,18 +66,6 @@ jobs:
               .download-button:hover {
                 background-color: #ddd;
               }
-              figure {
-                text-align: center;
-                margin: 20px 0;
-              }
-              figure img {
-                max-width: 100%;
-                height: auto;
-              }
-              figcaption {
-                margin-top: 10px;
-                font-style: italic;
-              }
             </style>
           </head>
           <body class="latex-dark-auto">
@@ -145,9 +82,6 @@ jobs:
           # Remove the title from the body and add the rest of the content
           sed '1,/<body/d' outline_temp.html | sed '/<h1 class="title">/,/<\/h1>/d' >> ./tomoto0.github.io/outline.html
           
-          # Replace figure references with actual SVG images
-          sed -i 's/<img src="$$.*$$\.pdf" /<img src="\1.svg" /g' ./tomoto0.github.io/outline.html
-          
           cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
             MathJax = {
@@ -162,17 +96,13 @@ jobs:
           
           rm outline_temp.html
 
-      - name: Copy extracted media
-        run: |
-          cp -R ./extracted-media ./tomoto0.github.io/
-
       - name: Commit and push changes
         run: |
           cd ./tomoto0.github.io
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add outline.html extracted-media
-          git commit -m 'Convert LaTeX to HTML with improved styling and figures'
+          git add outline.html
+          git commit -m 'Convert LaTeX to HTML with improved styling'
           git push
     env:
       GITHUB_TOKEN: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
