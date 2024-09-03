@@ -21,8 +21,34 @@ jobs:
           repository: tomoto0/tomoto0.github.io
           path: tomoto0.github.io
 
-      - name: Install pandoc
-        run: sudo apt-get install -y pandoc
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-full
+          sudo apt-get install -y texlive-latex-extra
+
+      - name: Install additional tools
+        run: |
+          sudo apt-get install -y pandoc
+          sudo apt-get install -y pdf2svg
+          sudo apt-get install -y poppler-utils
+
+      - name: Convert LaTeX to PDF
+        run: |
+          cd ./Outline
+          pdflatex -interaction=nonstopmode Outline.tex
+          pdflatex -interaction=nonstopmode Outline.tex  # Run twice for references
+
+      - name: Extract images from PDF
+        run: |
+          cd ./Outline
+          mkdir -p images
+          pdfimages -all Outline.pdf images/image
+
+      - name: Convert PDF to SVG
+        run: |
+          cd ./Outline
+          pdf2svg Outline.pdf Outline.svg all
 
       - name: Convert LaTeX to HTML
         run: |
@@ -66,12 +92,17 @@ jobs:
               .download-button:hover {
                 background-color: #ddd;
               }
+              .svg-figure {
+                width: 100%;
+                max-width: 800px;
+                margin: 20px auto;
+              }
             </style>
           </head>
           <body class="latex-dark-auto">
             <h1>$title</h1>
             <div class="download-container">
-              <a href="Outline (9).pdf" download>
+              <a href="Outline.pdf" download>
                 <button class="download-button">
                   <i class="fa fa-download"></i> Download PDF
                 </button>
@@ -81,6 +112,13 @@ jobs:
           
           # Remove the title from the body and add the rest of the content
           sed '1,/<body/d' outline_temp.html | sed '/<h1 class="title">/,/<\/h1>/d' >> ./tomoto0.github.io/outline.html
+          
+          # Insert SVG figures
+          for svg in ./Outline/*.svg; do
+            echo "<div class='svg-figure'>" >> ./tomoto0.github.io/outline.html
+            cat "$svg" >> ./tomoto0.github.io/outline.html
+            echo "</div>" >> ./tomoto0.github.io/outline.html
+          done
           
           cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
@@ -96,13 +134,19 @@ jobs:
           
           rm outline_temp.html
 
+      - name: Copy PDF and images
+        run: |
+          cp ./Outline/Outline.pdf ./tomoto0.github.io/
+          cp -r ./Outline/images ./tomoto0.github.io/
+
       - name: Commit and push changes
         run: |
           cd ./tomoto0.github.io
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add outline.html
-          git commit -m 'Convert LaTeX to HTML with improved styling'
+          git add outline.html Outline.pdf images
+          git commit -m 'Convert LaTeX to HTML with improved styling and figures'
           git push
+
     env:
       GITHUB_TOKEN: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
