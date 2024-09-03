@@ -37,6 +37,7 @@ jobs:
       - name: Add additional CSS and scripts
         run: |
           title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{\(.*\)}/\1/')
+          abstract=$(sed -n '/\\begin{abstract}/,/\\end{abstract}/p' ./Outline/Outline.tex | sed '1d;$d')
           cat << EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
@@ -67,10 +68,19 @@ jobs:
           .download-button:hover {
             background-color: #ddd;
           }
+          h1 { font-size: 1.8em; }
+          h2 { font-size: 1.5em; }
+          h3 { font-size: 1.3em; }
+          h4 { font-size: 1.2em; }
+          h5 { font-size: 1.1em; }
+          h6 { font-size: 1em; }
           </style>
           </head>
           <body class="latex-dark-auto">
           <h1>$title</h1>
+          <h2>Abstract</h2>
+          <p>$abstract</p>
+          <h2>Introduction</h2>
           <div class="download-container">
           <a href="Outline (9).pdf" download>
             <button class="download-button">
@@ -81,7 +91,7 @@ jobs:
           EOF
 
           # Remove the title from the body and add the rest of the content
-          sed '1,/<body/d' outline_temp.html | sed '/<h1 class="title">/,/<\/h1>/d' >> ./tomoto0.github.io/outline.html
+          sed '1,/<body/d' outline_temp.html | sed '/<h1 class="title">/,/<\/h1>/d' | sed '/<h1 id="abstract">/,/<h1 id="introduction">/d' >> ./tomoto0.github.io/outline.html
 
           cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
