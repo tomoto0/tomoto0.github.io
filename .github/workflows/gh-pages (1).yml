@@ -47,6 +47,7 @@ jobs:
           bibtex Outline
           pdflatex -interaction=nonstopmode Outline.tex
           pdflatex -interaction=nonstopmode Outline.tex
+          pdflatex -interaction=nonstopmode Outline.tex
           mkdir -p ../current-repo/docs
           cp Outline.pdf ../current-repo/docs/
       - name: List contents of docs directory
@@ -75,7 +76,7 @@ jobs:
             git push origin main
           fi
       - name: Check LaTeX log
-        if: failure()
+        if: always()
         run: |
           if [ -d "outline-repo" ]; then
             cd outline-repo
