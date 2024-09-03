@@ -24,11 +24,21 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc texlive-latex-extra texlive-fonts-recommended
+          sudo apt-get install -y pandoc
+
+      - name: Install TeX Live
+        run: |
+          wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+          tar -xzf install-tl-unx.tar.gz
+          cd install-tl-*
+          sudo perl install-tl --profile=../Outline/texlive.profile --repository https://mirror.ctan.org/systems/texlive/tlnet/
+
+      - name: Set up TeX Live path
+        run: |
+          echo "/usr/local/texlive/2024/bin/x86_64-linux" >> $GITHUB_PATH
 
       - name: Install additional LaTeX packages
         run: |
-          sudo tlmgr init-usertree
           sudo tlmgr install pgfplots subcaption caption geometry
 
       - name: Convert LaTeX to HTML
