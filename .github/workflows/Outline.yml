@@ -30,8 +30,8 @@ jobs:
         run: |
           wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
           tar -xzf install-tl-unx.tar.gz
-          cd install-tl-*
-          sudo perl install-tl --profile=../Outline/texlive.profile --repository https://mirror.ctan.org/systems/texlive/tlnet/
+          cd install-tl-*/
+          sudo perl ./install-tl --profile=../../Outline/texlive.profile --repository https://mirror.ctan.org/systems/texlive/tlnet/
 
       - name: Set up TeX Live path
         run: |
