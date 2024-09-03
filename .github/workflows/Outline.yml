@@ -28,31 +28,29 @@ jobs:
 
       - name: Install TeX Live
         run: |
-          wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
-          tar -xzf install-tl-unx.tar.gz
-          INSTALL_TL_DIR=$(find . -maxdepth 1 -type d -name "install-tl-*" | head -n 1)
-          if [ -z "$INSTALL_TL_DIR" ]; then
-            echo "TeX Live installation directory not found"
-            exit 1
-          fi
-          cd "$INSTALL_TL_DIR"
-          sudo ./install-tl --profile=../../Outline/texlive.profile
+          sudo apt-get install -y texlive-full
 
       - name: Update PATH
         run: |
-          echo "export PATH=$PATH:/usr/local/texlive/2023/bin/x86_64-linux" >> $GITHUB_ENV
-          echo "export MANPATH=$MANPATH:/usr/local/texlive/2023/texmf-dist/doc/man" >> $GITHUB_ENV
-          echo "export INFOPATH=$INFOPATH:/usr/local/texlive/2023/texmf-dist/doc/info" >> $GITHUB_ENV
+          echo "/usr/local/texlive/2023/bin/x86_64-linux" >> $GITHUB_PATH
 
       - name: Verify TeX Live Installation
         run: |
           which pdflatex
+          pdflatex --version
           which tlmgr
+          tlmgr --version
+
+      - name: Check PATH
+        run: echo $PATH
+
+      - name: Check TeX Live installation directory
+        run: ls -R /usr/local/texlive
 
       - name: Install additional TeX Live packages
         run: |
-          sudo env "PATH=$PATH" tlmgr update --self
-          sudo env "PATH=$PATH" tlmgr install pgfplots caption geometry subcaption
+          sudo tlmgr update --self
+          sudo tlmgr install pgfplots caption geometry subcaption
 
       - name: Convert LaTeX to HTML
         run: |
