@@ -21,8 +21,10 @@ jobs:
           repository: tomoto0/tomoto0.github.io
           path: tomoto0.github.io
 
-      - name: Install pandoc
-        run: sudo apt-get install -y pandoc
+      - name: Install pandoc and additional dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-latex-base texlive-latex-extra texlive-fonts-recommended
 
       - name: Convert LaTeX to HTML
         run: |
@@ -31,7 +33,15 @@ jobs:
             --mathjax \
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments \
-            --lua-filter=./Outline/custom-filter.lua
+            --lua-filter=./Outline/custom-filter.lua \
+            --from=latex+raw_tex \
+            --to=html5 \
+            --embed-resources \
+            --standalone \
+            --table-of-contents \
+            --number-sections \
+            --wrap=none \
+            --extract-media=extracted-media
 
       - name: Add additional CSS and scripts
         run: |
@@ -66,6 +76,27 @@ jobs:
               .download-button:hover {
                 background-color: #ddd;
               }
+              table {
+                border-collapse: collapse;
+                width: 100%;
+                margin-bottom: 1em;
+              }
+              th, td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+              }
+              th {
+                background-color: #f2f2f2;
+              }
+              figure {
+                text-align: center;
+                margin: 1em 0;
+              }
+              figcaption {
+                font-style: italic;
+                margin-top: 0.5em;
+              }
             </style>
           </head>
           <body class="latex-dark-auto">
@@ -87,8 +118,23 @@ jobs:
             MathJax = {
               tex: {
                 inlineMath: [['$', '$'],],
+                displayMath: [['$$', '$$']],
+                processEscapes: true,
+                processEnvironments: true
               },
+              options: {
+                ignoreHtmlClass: 'tex2jax_ignore|editor-rich-text'
+              },
+              svg: {
+                fontCache: 'global'
+              }
             };
+          </script>
+          <script>
+            // Reinitialize Prism.js after the content is loaded
+            document.addEventListener('DOMContentLoaded', (event) => {
+              Prism.highlightAll();
+            });
           </script>
           </body>
           </html>
@@ -96,13 +142,20 @@ jobs:
           
           rm outline_temp.html
 
+      - name: Copy extracted media
+        run: |
+          if [ -d "extracted-media" ]; then
+            cp -R extracted-media/* ./tomoto0.github.io/
+          fi
+
       - name: Commit and push changes
         run: |
           cd ./tomoto0.github.io
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add outline.html
-          git commit -m 'Convert LaTeX to HTML with improved styling'
+          git add extracted-media/* || true
+          git commit -m 'Convert LaTeX to HTML with improved styling and media support'
           git push
     env:
       GITHUB_TOKEN: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
