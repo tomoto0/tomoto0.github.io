@@ -1,4 +1,5 @@
 name: Convert LaTeX to HTML
+
 on:
   push:
     branches:
@@ -35,7 +36,7 @@ jobs:
 
       - name: Add additional CSS and scripts
         run: |
-          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{$$.*$$}/\1/')
+          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{\(.*\)}/\1/')
           cat << EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
