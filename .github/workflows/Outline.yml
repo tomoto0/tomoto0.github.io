@@ -68,18 +68,26 @@ jobs:
           .download-button:hover {
             background-color: #ddd;
           }
-          h1 { font-size: 1.8em; }
-          h2 { font-size: 1.5em; }
-          h3 { font-size: 1.3em; }
-          h4 { font-size: 1.2em; }
-          h5 { font-size: 1.1em; }
-          h6 { font-size: 1em; }
+          h1, h2, h3, h4, h5, h6 { font-size: 1.2em; }
+          h2 { font-size: 1.1em; }
+          h3, h4, h5, h6 { font-size: 1em; }
+          .abstract-title {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+          }
+          .abstract-content {
+            margin-top: 10px;
+            margin-bottom: 20px;
+          }
           </style>
           </head>
           <body class="latex-dark-auto">
           <h1>$title</h1>
-          <h2>Abstract</h2>
-          <p>$abstract</p>
+          <div class="abstract-title">Abstract</div>
+          <div class="abstract-content">
+          $abstract
+          </div>
           <h2>Introduction</h2>
           <div class="download-container">
           <a href="Outline (9).pdf" download>
