@@ -24,15 +24,18 @@ jobs:
       - name: Install basic dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc
+          sudo apt-get install -y pandoc wget
 
       - name: Install TeX Live
         run: |
-          sudo apt-get install -y texlive-full
+          wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+          tar -xzf install-tl-unx.tar.gz
+          cd install-tl-*
+          sudo perl install-tl --profile=../Outline/texlive.profile
 
       - name: Update PATH
         run: |
-          echo "/usr/local/texlive/2023/bin/x86_64-linux" >> $GITHUB_PATH
+          echo "/usr/local/texlive/2024/bin/x86_64-linux" >> $GITHUB_PATH
 
       - name: Verify TeX Live Installation
         run: |
@@ -45,7 +48,7 @@ jobs:
         run: echo $PATH
 
       - name: Check TeX Live installation directory
-        run: ls -R /usr/local/texlive
+        run: ls -R /usr/local/texlive/2024
 
       - name: Install additional TeX Live packages
         run: |
