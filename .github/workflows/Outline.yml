@@ -21,55 +21,48 @@ jobs:
           repository: tomoto0/tomoto0.github.io
           path: tomoto0.github.io
 
-      - name: Cache TeX Live packages
-        uses: actions/cache@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
         with:
-          path: /usr/share/texlive
-          key: ${{ runner.os }}-texlive-${{ hashFiles('**/Outline.tex') }}
-          restore-keys: |
-            ${{ runner.os }}-texlive-
+          python-version: '3.x'
 
-      - name: Install TeX Live and additional tools
-        if: steps.cache-texlive.outputs.cache-hit != 'true'
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra
-          sudo apt-get install -y pandoc
-          sudo apt-get install -y librsvg2-bin
+          sudo apt-get install -y pandoc texlive-latex-extra pdf2svg
+          pip install pandocfilters
 
-      - name: Create Lua filter for TikZ conversion
+      - name: Create Python filter for TikZ conversion
         run: |
-          cat << EOF > tikz-to-svg.lua
-          local function tikz_to_svg(src, filetype, attr)
-            local tmp = os.tmpname()
-            local tmpdir = string.match(tmp, "^(.*[\\/])") or "."
-            local f = io.open(tmp .. ".tex", "w")
-            f:write("\\documentclass{standalone}\n\\usepackage{tikz}\n\\begin{document}\n")
-            f:write(src)
-            f:write("\n\\end{document}")
-            f:close()
-            os.execute(string.format("pdflatex -output-directory %s %s", tmpdir, tmp .. ".tex"))
-            os.execute(string.format("pdf2svg %s.pdf %s.svg", tmp, tmp))
-            local svg = io.open(tmp .. ".svg", "r")
-            local svgcontent = svg:read("*all")
-            svg:close()
-            os.remove(tmp .. ".tex")
-            os.remove(tmp .. ".pdf")
-            os.remove(tmp .. ".svg")
-            os.remove(tmp .. ".aux")
-            os.remove(tmp .. ".log")
-            return pandoc.RawBlock('html', svgcontent)
-          end
+          cat << EOF > tikz_to_svg.py
+          #!/usr/bin/env python3
+          import pandocfilters as pf
+          import subprocess
+          import os
+          import hashlib
 
-          return {
-            {
-              CodeBlock = function(el)
-                if el.classes[1] == "tikz" then
-                  return tikz_to_svg(el.text, "svg", el.attr)
-                end
-              end,
-            }
-          }
+          def tikz2svg(key, value, format, meta):
+              if key == 'CodeBlock':
+                  [[ident, classes, keyvals], code] = value
+                  if "tikz" in classes:
+                      outfile = hashlib.md5(code.encode()).hexdigest()
+                      tmpdir = "/tmp"
+                      texfile = os.path.join(tmpdir, outfile + ".tex")
+                      with open(texfile, "w") as f:
+                          f.write("\documentclass{standalone}\n\usepackage{tikz}\n\\begin{document}\n")
+                          f.write(code)
+                          f.write("\n\end{document}")
+                      
+                      subprocess.run(["pdflatex", "-output-directory", tmpdir, texfile], check=True, capture_output=True)
+                      subprocess.run(["pdf2svg", os.path.join(tmpdir, outfile + ".pdf"), os.path.join(tmpdir, outfile + ".svg")], check=True)
+                      
+                      with open(os.path.join(tmpdir, outfile + ".svg"), "r") as f:
+                          svg = f.read()
+                      
+                      return pf.RawBlock('html', svg)
+
+          if __name__ == "__main__":
+              pf.toJSONFilter(tikz2svg)
           EOF
 
       - name: Convert LaTeX to HTML
@@ -79,8 +72,7 @@ jobs:
             --mathjax \
             --css=https://latex.vercel.app/style.css \
             --highlight-style=pygments \
-            --lua-filter=./Outline/custom-filter.lua \
-            --lua-filter=tikz-to-svg.lua
+            --filter=./tikz_to_svg.py
 
       - name: Add additional CSS and scripts
         run: |
