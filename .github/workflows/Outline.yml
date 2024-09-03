@@ -37,13 +37,42 @@ jobs:
           fi
           cd "$INSTALL_TL_DIR"
           sudo ./install-tl --profile=../../Outline/texlive.profile
-          echo "/usr/local/texlive/2024/bin/x86_64-linux" >> $GITHUB_PATH
+
+      - name: Find TeX Live path
+        id: texlive_path
+        run: |
+          echo "Which pdflatex:"
+          PDFLATEX_PATH=$(which pdflatex) || echo "pdflatex not found"
+          
+          echo "Which tlmgr:"
+          TLMGR_PATH=$(which tlmgr) || echo "tlmgr not found"
+          
+          echo "TEXMFROOT:"
+          TEXMFROOT=$(kpsewhich -var-value TEXMFROOT) || echo "TEXMFROOT not found"
+          
+          echo "TEXMFDIST:"
+          TEXMFDIST=$(kpsewhich -var-value TEXMFDIST) || echo "TEXMFDIST not found"
+          
+          echo "Searching for texlive directory:"
+          TEXLIVE_DIR=$(find /usr/local -type d -name "texlive" 2>/dev/null | head -n 1) || echo "texlive directory not found"
+          
+          if [ -n "$PDFLATEX_PATH" ]; then
+            TEXLIVE_BIN_DIR=$(dirname "$PDFLATEX_PATH")
+            echo "TEXLIVE_BIN_DIR=$TEXLIVE_BIN_DIR" >> $GITHUB_OUTPUT
+          elif [ -n "$TEXLIVE_DIR" ]; then
+            TEXLIVE_BIN_DIR=$(find "$TEXLIVE_DIR" -type d -name "bin" | head -n 1)
+            echo "TEXLIVE_BIN_DIR=$TEXLIVE_BIN_DIR" >> $GITHUB_OUTPUT
+          else
+            echo "Unable to find TeX Live binary directory"
+            exit 1
+          fi
 
       - name: Update PATH
         run: |
-          echo 'export PATH=$PATH:/usr/local/texlive/2024/bin/x86_64-linux' >> $GITHUB_ENV
-          echo 'export MANPATH=$MANPATH:/usr/local/texlive/2024/texmf-dist/doc/man' >> $GITHUB_ENV
-          echo 'export INFOPATH=$INFOPATH:/usr/local/texlive/2024/texmf-dist/doc/info' >> $GITHUB_ENV
+          echo "${{ steps.texlive_path.outputs.TEXLIVE_BIN_DIR }}" >> $GITHUB_PATH
+          echo "export PATH=$PATH:${{ steps.texlive_path.outputs.TEXLIVE_BIN_DIR }}" >> $GITHUB_ENV
+          echo "export MANPATH=$MANPATH:$(dirname ${{ steps.texlive_path.outputs.TEXLIVE_BIN_DIR }})/texmf-dist/doc/man" >> $GITHUB_ENV
+          echo "export INFOPATH=$INFOPATH:$(dirname ${{ steps.texlive_path.outputs.TEXLIVE_BIN_DIR }})/texmf-dist/doc/info" >> $GITHUB_ENV
           source $GITHUB_ENV
 
       - name: Install additional TeX Live packages
