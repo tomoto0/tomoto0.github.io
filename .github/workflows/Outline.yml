@@ -30,8 +30,13 @@ jobs:
         run: |
           wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
           tar -xzf install-tl-unx.tar.gz
-          cd install-tl-*
-          sudo perl install-tl --profile=../Outline/texlive.profile
+          INSTALL_TL_DIR=$(find . -maxdepth 1 -type d -name "install-tl-*" | head -n 1)
+          if [ -z "$INSTALL_TL_DIR" ]; then
+            echo "TeX Live installation directory not found"
+            exit 1
+          fi
+          cd "$INSTALL_TL_DIR"
+          sudo perl install-tl --profile=../../Outline/texlive.profile
 
       - name: Update PATH
         run: |
