@@ -43,6 +43,12 @@ jobs:
             exit 1
           fi
           cd outline-repo
+          # Check if image files exist
+          if [ ! -f "Annual income table.png" ] || [ ! -f "A conceptual model.jpeg" ]; then
+            echo "Error: Required image files are missing."
+            exit 1
+          fi
+          # Run LaTeX and BibTeX commands
           pdflatex -interaction=nonstopmode Outline.tex
           bibtex Outline
           pdflatex -interaction=nonstopmode Outline.tex
