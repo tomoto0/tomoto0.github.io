@@ -78,7 +78,7 @@ jobs:
 
       - name: Add additional CSS and scripts
         run: |
-          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{$$.*$$}/\1/')
+          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed -E 's/\\title\{(.*)\}/\1/')
           sed -i "s/<title>.*<\/title>/<title>$title<\/title>/" ./tomoto0.github.io/outline.html
           sed -i '/<style>/r'<(cat << EOF
             .latex-dark-auto {
