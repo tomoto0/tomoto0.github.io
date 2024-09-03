@@ -21,86 +21,80 @@ jobs:
           repository: tomoto0/tomoto0.github.io
           path: tomoto0.github.io
 
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pandoc texlive-latex-extra pdf2svg
-          pip install pandocfilters
-
-      - name: Create Python filter for TikZ conversion
-        run: |
-          cat << EOF > tikz_to_svg.py
-          #!/usr/bin/env python3
-          import pandocfilters as pf
-          import subprocess
-          import os
-          import hashlib
-
-          def tikz2svg(key, value, format, meta):
-              if key == 'CodeBlock':
-                  [[ident, classes, keyvals], code] = value
-                  if "tikz" in classes:
-                      outfile = hashlib.md5(code.encode()).hexdigest()
-                      tmpdir = "/tmp"
-                      texfile = os.path.join(tmpdir, outfile + ".tex")
-                      with open(texfile, "w") as f:
-                          f.write(r"\documentclass{standalone}" + "\n")
-                          f.write(r"\usepackage{tikz}" + "\n")
-                          f.write(r"\begin{document}" + "\n")
-                          f.write(code)
-                          f.write(r"\end{document}")
-                      
-                      subprocess.run(["pdflatex", "-output-directory", tmpdir, texfile], check=True, capture_output=True)
-                      subprocess.run(["pdf2svg", os.path.join(tmpdir, outfile + ".pdf"), os.path.join(tmpdir, outfile + ".svg")], check=True)
-                      
-                      with open(os.path.join(tmpdir, outfile + ".svg"), "r") as f:
-                          svg = f.read()
-                      
-                      return pf.RawBlock('html', svg)
-
-          if __name__ == "__main__":
-              pf.toJSONFilter(tikz2svg)
-          EOF
+      - name: Install pandoc
+        run: sudo apt-get install -y pandoc
 
       - name: Convert LaTeX to HTML
         run: |
-          pandoc ./Outline/Outline.tex -o ./tomoto0.github.io/outline.html \
-            --standalone \
-            --mathjax \
-            --css=https://latex.vercel.app/style.css \
-            --highlight-style=pygments \
-            --filter=./tikz_to_svg.py
+          pandoc ./Outline/Outline.tex -o outline_temp.html \
+          --standalone \
+          --mathjax \
+          --css=https://latex.vercel.app/style.css \
+          --highlight-style=pygments \
+          --lua-filter=./Outline/custom-filter.lua
 
       - name: Add additional CSS and scripts
         run: |
-          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed -E 's/\\title\{(.*)\}/\1/')
-          sed -i "s/<title>.*<\/title>/<title>$title<\/title>/" ./tomoto0.github.io/outline.html
-          sed -i '/<style>/r'<(cat << EOF
-            .latex-dark-auto {
-              --bg-color: #ffffff;
-              --text-color: #333333;
-            }
-            @media (prefers-color-scheme: dark) {
-              .latex-dark-auto {
-                --bg-color: #222222;
-                --text-color: #dddddd;
-              }
-            }
-            body {
-              background-color: var(--bg-color);
-              color: var(--text-color);
-            }
-            svg {
-              max-width: 100%;
-              height: auto;
-            }
+          title=$(grep -m 1 '\title{' ./Outline/Outline.tex | sed 's/\\title{$$.*$$}/\1/')
+          cat << EOF > ./tomoto0.github.io/outline.html
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>$title</title>
+          <link rel="stylesheet" href="https://latex.vercel.app/style.css">
+          <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
+          <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+          <style>
+          .download-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+          }
+          .download-button {
+            background-color: #f1f1f1;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+          }
+          .download-button:hover {
+            background-color: #ddd;
+          }
+          </style>
+          </head>
+          <body class="latex-dark-auto">
+          <h1>$title</h1>
+          <div class="download-container">
+          <a href="Outline (9).pdf" download>
+            <button class="download-button">
+              <i class="fa fa-download"></i> Download PDF
+            </button>
+          </a>
+          </div>
           EOF
-          ) ./tomoto0.github.io/outline.html
+
+          # Remove the title from the body and add the rest of the content
+          sed '1,/<body/d' outline_temp.html | sed '/<h1 class="title">/,/<\/h1>/d' >> ./tomoto0.github.io/outline.html
+
+          cat <<'EOF' >> ./tomoto0.github.io/outline.html
+          <script>
+          MathJax = {
+            tex: {
+              inlineMath: [['$', '$'],],
+            },
+          };
+          </script>
+          </body>
+          </html>
+          EOF
+
+          rm outline_temp.html
 
       - name: Commit and push changes
         run: |
@@ -108,8 +102,7 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add outline.html
-          git commit -m 'Convert LaTeX to HTML with improved styling and embedded SVG figures'
+          git commit -m 'Convert LaTeX to HTML with improved styling'
           git push
-
-    env:
-      GITHUB_TOKEN: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
