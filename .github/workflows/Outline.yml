@@ -36,7 +36,7 @@ jobs:
 
       - name: Add additional CSS and scripts
         run: |
-          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{$$.*$$}/\1/')
+          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{\(.*\)}/\1/')
           abstract=$(sed -n '/\\begin{abstract}/,/\\end{abstract}/p' ./Outline/Outline.tex | sed '1d;$d' | sed 's/\\noindent//')
           cat << EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
@@ -54,7 +54,7 @@ jobs:
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px 0;
+            padding: 20px 0;
           }
           .download-button {
             background-color: #f1f1f1;
@@ -80,20 +80,28 @@ jobs:
             margin-top: 10px;
             margin-bottom: 20px;
           }
+
+
+          .abstract-content {
+            margin-top: 10px;
+            margin-bottom: 20px;
+          }
+
           </style>
           </head>
           <body class="latex-dark-auto">
           <h1>$title</h1>
+          <div class="abstract-title">Abstract</div>
+          <div class="abstract-content">
+          $abstract
+          </div>
+          <h2>Introduction</h2>
           <div class="download-container">
           <a href="Outline (9).pdf" download>
             <button class="download-button">
               <i class="fa fa-download"></i> Download PDF
             </button>
           </a>
-          </div>
-          <div class="abstract-title">Abstract</div>
-          <div class="abstract-content">
-          $abstract
           </div>
           EOF
 
