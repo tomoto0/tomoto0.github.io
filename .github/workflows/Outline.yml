@@ -39,14 +39,19 @@ jobs:
           echo "TEXMFSYSCONFIG /usr/local/texlive/2024/texmf-config" >> texlive.profile
           echo "TEXMFSYSVAR /usr/local/texlive/2024/texmf-var" >> texlive.profile
           sudo ./install-tl --profile=texlive.profile
+          echo "/usr/local/texlive/2024/bin/x86_64-linux" >> $GITHUB_PATH
+
+      - name: Update PATH
+        run: |
           echo 'export PATH=$PATH:/usr/local/texlive/2024/bin/x86_64-linux' >> $GITHUB_ENV
           echo 'export MANPATH=$MANPATH:/usr/local/texlive/2024/texmf-dist/doc/man' >> $GITHUB_ENV
           echo 'export INFOPATH=$INFOPATH:/usr/local/texlive/2024/texmf-dist/doc/info' >> $GITHUB_ENV
+          source $GITHUB_ENV
 
       - name: Install additional TeX Live packages
         run: |
-          sudo tlmgr update --self
-          sudo tlmgr install pgfplots subcaption caption geometry
+          sudo env "PATH=$PATH" tlmgr update --self
+          sudo env "PATH=$PATH" tlmgr install pgfplots subcaption caption geometry
 
       - name: Convert LaTeX to HTML
         run: |
@@ -71,7 +76,7 @@ jobs:
 
       - name: Add additional CSS and scripts
         run: |
-          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{\(.*\)}/\1/')
+          title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed 's/\\title{$$.*$$}/\1/')
           cat <<EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
@@ -131,7 +136,7 @@ jobs:
           sed '1,/<body/d' outline_temp.html | sed '/<h1 class="title">/,/<\/h1>/d' >> ./tomoto0.github.io/outline.html
           
           # Replace figure references with actual SVG images
-          sed -i 's/<img src="\(.*\)\.pdf" /<img src="\1.svg" /g' ./tomoto0.github.io/outline.html
+          sed -i 's/<img src="$$.*$$\.pdf" /<img src="\1.svg" /g' ./tomoto0.github.io/outline.html
           
           cat <<'EOF' >> ./tomoto0.github.io/outline.html
           <script>
