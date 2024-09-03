@@ -28,17 +28,22 @@ jobs:
 
       - name: Install TeX Live
         run: |
-          wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
-          tar -xzf install-tl-unx.tar.gz
-          cd install-tl-*/
-          sudo perl ./install-tl --profile=../../Outline/texlive.profile --repository https://mirror.ctan.org/systems/texlive/tlnet/
+          sudo apt-get update
+          sudo apt-get install -y texlive-full
+          sudo apt-get install -y texlive-latex-extra
 
       - name: Set up TeX Live path
         run: |
           echo "/usr/local/texlive/2024/bin/x86_64-linux" >> $GITHUB_PATH
+          echo "/usr/local/texlive/2023/bin/x86_64-linux" >> $GITHUB_PATH
+          echo "/usr/local/texlive/2022/bin/x86_64-linux" >> $GITHUB_PATH
+          echo "/usr/local/texlive/2021/bin/x86_64-linux" >> $GITHUB_PATH
+          source $HOME/.profile
 
       - name: Install additional LaTeX packages
         run: |
+          sudo tlmgr init-usertree
+          sudo tlmgr update --self
           sudo tlmgr install pgfplots subcaption caption geometry
 
       - name: Convert LaTeX to HTML
