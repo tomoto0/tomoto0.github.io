@@ -36,14 +36,7 @@ jobs:
             exit 1
           fi
           cd "$INSTALL_TL_DIR"
-          echo "selected_scheme scheme-basic" > texlive.profile
-          echo "TEXDIR /usr/local/texlive/2024" >> texlive.profile
-          echo "TEXMFCONFIG ~/.texlive2024/texmf-config" >> texlive.profile
-          echo "TEXMFHOME ~/texmf" >> texlive.profile
-          echo "TEXMFLOCAL /usr/local/texlive/texmf-local" >> texlive.profile
-          echo "TEXMFSYSCONFIG /usr/local/texlive/2024/texmf-config" >> texlive.profile
-          echo "TEXMFSYSVAR /usr/local/texlive/2024/texmf-var" >> texlive.profile
-          sudo ./install-tl --profile=texlive.profile
+          sudo ./install-tl --profile=../../Outline/texlive.profile
           echo "/usr/local/texlive/2024/bin/x86_64-linux" >> $GITHUB_PATH
 
       - name: Update PATH
@@ -56,8 +49,7 @@ jobs:
       - name: Install additional TeX Live packages
         run: |
           sudo env "PATH=$PATH" tlmgr update --self
-          sudo env "PATH=$PATH" tlmgr install pgfplots caption geometry
-          sudo env "PATH=$PATH" tlmgr install collection-latexextra
+          sudo env "PATH=$PATH" tlmgr install pgfplots caption geometry subcaption
 
       - name: Convert LaTeX to HTML
         run: |
@@ -71,12 +63,15 @@ jobs:
 
       - name: Process LaTeX figures and tables
         run: |
+          mkdir -p ./extracted-media
           for file in ./Outline/*.tex; do
             if [[ "$file" != "./Outline/Outline.tex" ]]; then
               filename=$(basename -- "$file")
               filename="${filename%.*}"
-              pdflatex -output-directory=./extracted-media "$file"
-              pdftocairo -svg "./extracted-media/${filename}.pdf" "./extracted-media/${filename}.svg"
+              pdflatex -output-directory=./extracted-media -interaction=nonstopmode "$file"
+              if [ -f "./extracted-media/${filename}.pdf" ]; then
+                pdftocairo -svg "./extracted-media/${filename}.pdf" "./extracted-media/${filename}.svg"
+              fi
             fi
           done
 
