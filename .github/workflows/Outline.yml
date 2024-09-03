@@ -21,20 +21,30 @@ jobs:
           repository: tomoto0/tomoto0.github.io
           path: tomoto0.github.io
 
-      - name: Install dependencies
+      - name: Install basic dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc texlive texlive-latex-extra
+          sudo apt-get install -y pandoc
 
-      - name: Update TeX Live Manager
+      - name: Install TeX Live
         run: |
-          wget http://mirror.ctan.org/systems/texlive/tlnet/update-tlmgr-latest.sh
-          chmod +x update-tlmgr-latest.sh
-          sudo ./update-tlmgr-latest.sh -- --update
+          wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+          tar -xzf install-tl-unx.tar.gz
+          cd install-tl-*
+          echo "selected_scheme scheme-basic" > texlive.profile
+          echo "TEXDIR /usr/local/texlive/2024" >> texlive.profile
+          echo "TEXMFCONFIG ~/.texlive2024/texmf-config" >> texlive.profile
+          echo "TEXMFHOME ~/texmf" >> texlive.profile
+          echo "TEXMFLOCAL /usr/local/texlive/texmf-local" >> texlive.profile
+          echo "TEXMFSYSCONFIG /usr/local/texlive/2024/texmf-config" >> texlive.profile
+          echo "TEXMFSYSVAR /usr/local/texlive/2024/texmf-var" >> texlive.profile
+          sudo ./install-tl --profile=texlive.profile
+          echo 'export PATH=$PATH:/usr/local/texlive/2024/bin/x86_64-linux' >> $GITHUB_ENV
+          echo 'export MANPATH=$MANPATH:/usr/local/texlive/2024/texmf-dist/doc/man' >> $GITHUB_ENV
+          echo 'export INFOPATH=$INFOPATH:/usr/local/texlive/2024/texmf-dist/doc/info' >> $GITHUB_ENV
 
-      - name: Set TeX Live repository and update
+      - name: Install additional TeX Live packages
         run: |
-          sudo tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet
           sudo tlmgr update --self
           sudo tlmgr install pgfplots subcaption caption geometry
 
