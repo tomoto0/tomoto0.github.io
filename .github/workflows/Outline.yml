@@ -56,7 +56,8 @@ jobs:
       - name: Install additional TeX Live packages
         run: |
           sudo env "PATH=$PATH" tlmgr update --self
-          sudo env "PATH=$PATH" tlmgr install pgfplots subcaption caption geometry
+          sudo env "PATH=$PATH" tlmgr install pgfplots caption geometry
+          sudo env "PATH=$PATH" tlmgr install collection-latexextra
 
       - name: Convert LaTeX to HTML
         run: |
