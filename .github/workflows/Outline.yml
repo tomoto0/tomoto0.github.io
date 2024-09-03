@@ -49,9 +49,11 @@ jobs:
                       tmpdir = "/tmp"
                       texfile = os.path.join(tmpdir, outfile + ".tex")
                       with open(texfile, "w") as f:
-                          f.write("\documentclass{standalone}\n\usepackage{tikz}\n\\begin{document}\n")
+                          f.write(r"\documentclass{standalone}" + "\n")
+                          f.write(r"\usepackage{tikz}" + "\n")
+                          f.write(r"\begin{document}" + "\n")
                           f.write(code)
-                          f.write("\n\end{document}")
+                          f.write(r"\end{document}")
                       
                       subprocess.run(["pdflatex", "-output-directory", tmpdir, texfile], check=True, capture_output=True)
                       subprocess.run(["pdf2svg", os.path.join(tmpdir, outfile + ".pdf"), os.path.join(tmpdir, outfile + ".svg")], check=True)
