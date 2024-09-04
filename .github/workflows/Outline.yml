@@ -37,8 +37,9 @@ jobs:
       - name: Add additional CSS and scripts
         run: |
           title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed -E 's/\\title\{([^}]*)\}/\1/')
-          abstract=$(sed -n '/\\begin{center}/,/\\end{center}/ {//!p;}' ./Outline/Outline.tex | sed 's/\\noindent//;s/\\textbf{Abstract}//' | tr '\n' ' ')
-          introduction=$(sed -n '/\\section{Introduction}/,/\\section/{/Introduction/!{/\\section/!p}}' ./Outline/Outline.tex | tr '\n' ' ')
+          # 今回修正される内容に基づいて、抽出を入れ替える
+          introduction=$(sed -n '/\\begin{abstract}/,/\\end{abstract}/p' ./Outline/Outline.tex | sed '1d;$d' | tr '\n' ' ')
+          abstract=$(sed -n '/\\section{Introduction}/,/\\section/{/Introduction/!{/\\section/!p}}' ./Outline/Outline.tex | tr '\n' ' ')
           cat << EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
