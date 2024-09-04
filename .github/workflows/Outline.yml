@@ -37,8 +37,9 @@ jobs:
       - name: Add additional CSS and scripts
         run: |
           title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed -E 's/\\title\{([^}]*)\}/\1/')
-          abstract=$(sed -n '/\\begin{abstract}/,/\\end{abstract}/p' ./Outline/Outline.tex | sed '1d;$d' | tr '\n' ' ')
-          introduction=$(sed -n '/\\section{Introduction}/,/\\section/{/Introduction/!{/\\section/!p}}' ./Outline/Outline.tex | tr '\n' ' ')
+          # 今回修正される内容に基づいて、抽出を入れ替える
+          introduction=$(sed -n '/\\begin{abstract}/,/\\end{abstract}/p' ./Outline/Outline.tex | sed '1d;$d' | tr '\n' ' ')
+          abstract=$(sed -n '/\\section{Introduction}/,/\\section/{/Introduction/!{/\\section/!p}}' ./Outline/Outline.tex | tr '\n' ' ')
           cat << EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
@@ -88,6 +89,13 @@ jobs:
           </head>
           <body class="latex-dark-auto">
           <h1>$title</h1>
+          <div class="download-container">
+          <a href="Outline (9).pdf" download>
+            <button class="download-button">
+              <i class="fa fa-download"></i> Download PDF
+            </button>
+          </a>
+          </div>
           <div class="abstract-title">Abstract</div>
           <div class="abstract-content">
           $abstract
@@ -96,17 +104,9 @@ jobs:
           <div class="abstract-content">
           $introduction
           </div>
-          <div class="download-container">
-          <a href="Outline (9).pdf" download>
-            <button class="download-button">
-              <i class="fa fa-download"></i> Download PDF
-            </button>
-          </a>
-          </div>
           EOF
 
           # Remove the title from the body and add the rest of the content
-          
           sed '1,/<body/d' outline_temp.html | sed '/<h1 class="title">/,/<\/h1>/d' >> ./tomoto0.github.io/outline.html
 
           cat <<'EOF' >> ./tomoto0.github.io/outline.html
