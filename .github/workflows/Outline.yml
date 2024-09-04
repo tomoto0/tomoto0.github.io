@@ -22,10 +22,8 @@ jobs:
           repository: tomoto0/tomoto0.github.io
           path: tomoto0.github.io
 
-      - name: Install minimal dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pandoc
+      - name: Install pandoc
+        run: sudo apt-get install -y pandoc
 
       - name: Convert LaTeX to HTML
         run: |
@@ -85,10 +83,6 @@ jobs:
             line-height: 1.6;
             padding: 0 20px;
           }
-          img {
-            max-width: 100%;
-            height: auto;
-          }
           </style>
           </head>
           <body class="latex-dark-auto">
@@ -127,19 +121,13 @@ jobs:
 
           rm outline_temp.html
 
-      - name: Copy images
-        run: |
-          if [ -d "Outline" ]; then
-            find Outline -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -exec cp {} ./tomoto0.github.io/ \;
-          fi
-
       - name: Commit and push changes
         run: |
           cd ./tomoto0.github.io
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add outline.html *.jpg *.jpeg *.png
-          git diff --staged --quiet || git commit -m 'Convert LaTeX to HTML with improved styling and full content'
+          git add outline.html
+          git diff --staged --quiet || git commit -m 'Convert LaTeX to HTML with improved styling and full abstract'
           git push || echo "No changes to push"
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
