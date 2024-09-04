@@ -22,8 +22,20 @@ jobs:
           repository: tomoto0/tomoto0.github.io
           path: tomoto0.github.io
 
-      - name: Install pandoc
-        run: sudo apt-get install -y pandoc
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-full imagemagick
+
+      - name: Process TikZ and PGFPlots
+        run: |
+          cd Outline
+          for file in *.tex; do
+            pdflatex -shell-escape $file
+            for pdf in *.pdf; do
+              convert -density 300 $pdf -quality 90 ${pdf%.pdf}.png
+            done
+          done
 
       - name: Convert LaTeX to HTML
         run: |
@@ -32,7 +44,8 @@ jobs:
           --mathjax \
           --css=https://latex.vercel.app/style.css \
           --highlight-style=pygments \
-          --lua-filter=./Outline/custom-filter.lua
+          --lua-filter=./Outline/custom-filter.lua \
+          --extract-media=extracted-media
 
       - name: Add additional CSS and scripts
         run: |
@@ -83,6 +96,10 @@ jobs:
             line-height: 1.6;
             padding: 0 20px;
           }
+          img {
+            max-width: 100%;
+            height: auto;
+          }
           </style>
           </head>
           <body class="latex-dark-auto">
@@ -121,13 +138,22 @@ jobs:
 
           rm outline_temp.html
 
+      - name: Copy images
+        run: |
+          if [ -d "extracted-media" ]; then
+            cp -r extracted-media/* ./tomoto0.github.io/
+          fi
+          if [ -d "Outline" ]; then
+            find Outline -name "*.png" -exec cp {} ./tomoto0.github.io/ \;
+          fi
+
       - name: Commit and push changes
         run: |
           cd ./tomoto0.github.io
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add outline.html
-          git diff --staged --quiet || git commit -m 'Convert LaTeX to HTML with improved styling and full abstract'
+          git add outline.html *.png
+          git diff --staged --quiet || git commit -m 'Convert LaTeX to HTML with improved styling and full content'
           git push || echo "No changes to push"
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_FOR_OUTLINE_REPO }}
