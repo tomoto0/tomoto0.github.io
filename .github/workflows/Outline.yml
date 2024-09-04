@@ -38,7 +38,6 @@ jobs:
         run: |
           title=$(grep -m 1 '\\title{' ./Outline/Outline.tex | sed -E 's/\\title\{([^}]*)\}/\1/')
           abstract=$(sed -n '/\\end{center}/,/\\newpage/{/\\end{center}/!{/\\newpage/!p}}' ./Outline/Outline.tex | sed 's/\\noindent//' | tr '\n' ' ')
-          # introduction=$(sed -n '/\\section{Introduction}/,/\\section/{/Introduction/!{/\\section/!p}}' ./Outline/Outline.tex | tr '\n' ' ')
           cat << EOF > ./tomoto0.github.io/outline.html
           <!DOCTYPE html>
           <html lang="en">
@@ -99,7 +98,7 @@ jobs:
           <div class="abstract-content">
           $abstract
           </div>
-          <h2>Introduction</h2>
+          <h1>Introduction</h1>
           <div class="abstract-content">
           $introduction
           </div>
