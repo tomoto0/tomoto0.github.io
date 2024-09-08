@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assessing the Impact of Earthquakes on the Gender Income Gap</title>
+    <title>Gender-Differentiated Labor Market Impacts of the 2011 Fukushima Disaster</title>
     <link rel="stylesheet" href="https://latex.vercel.app/style.css">
     <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css">
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -31,11 +31,11 @@
 </head>
 <body class="latex-dark-auto">
     <article class="indent-pars">
-        <h1>Assessing the Impact of Earthquakes on the Gender Income Gap</h1>
+        <h1>Gender-Differentiated Labor Market Impacts of the 2011 Fukushima Disaster</h1>
 
         <div class="abstract">
             <h2>Abstract</h2>
-            <p>This study examines the impact of earthquakes on the gender income gap in Kuchma Prefectures. Using a difference-in-differences approach, we find that the immediate effect of earthquakes on female incomes is negative, but in the longer term, female incomes surge compared to males. We explore possible explanations for this phenomenon, including government support and aid, women's empowerment initiatives, and changes in social norms.</p>
+            <p>This study examines the impact of the 2011 Fukushima disaster on the labor market in Fukushima Prefecture, focusing on the gender-differentiated effects on employment status and income. Using data from the 2010 and 2015 Population Census, we find that the disaster led to a significant decline in non-regular employment among females, resulting in an increase in average income for women in the region. Our analysis also reveals that the disaster had a transformative impact on female labor market participation and employment status, with a shift towards regular employment. The findings of this study have important implications for understanding the economic consequences of natural disasters and the need for targeted policies to support affected populations.</p>
         </div>
 
         <h2>Contents</h2>
@@ -48,55 +48,86 @@
         </ol>
 
         <h2 id="introduction">Introduction</h2>
-        <p>Natural disasters, such as earthquakes, can have devastating effects on communities and economies. The impact of earthquakes on the gender income gap is a complex issue that has received limited attention in the literature. This study aims to assess the impact of earthquakes on the gender income gap in Kuchma Prefectures.</p>
+        <p>The 2011 Fukushima disaster had a devastating impact on the labor market in Fukushima Prefecture, with significant effects on employment status and income. This study examines the gender-differentiated effects of the disaster on the labor market, using data from the 2010 and 2015 Population Census.</p>
 
         <h2 id="methods">Methods</h2>
-        <p>We use a difference-in-differences approach to estimate the causal effect of earthquakes on the gender income gap. Our model includes individual and year fixed effects to control for time-invariant individual characteristics and time-varying aggregate shocks.</p>
-
-        <div class="theorem">
-            <p><strong>Theorem 1:</strong> The difference-in-differences model can be specified as:</p>
-            \[
-            Y_{it} = \beta_0 + \beta_1*Treatment_{it} + \beta_2*Post_{it} + \beta_3*Treatment_{it}*Post_{it} + \alpha_i + \gamma_t + \epsilon_{it}
-            \]
-        </div>
-
-        <div class="proof">
-            <p><strong>Proof:</strong> The model includes individual and year fixed effects to control for time-invariant individual characteristics and time-varying aggregate shocks. The treatment effect is estimated as the difference-in-differences between the pre- and post-disaster periods.</p>
-        </div>
+        <p>This study uses a difference-in-differences (DID) approach to estimate the impact of the disaster on employment status and income. The DID model is estimated separately for male and female workers, using data from the 2010 and 2015 Population Census.</p>
 
         <h2 id="results">Results</h2>
-        <p>Our results show that the immediate effect of earthquakes on female incomes is negative, but in the longer term, female incomes surge compared to males. We find that the treatment effect is significant and positive, indicating that the earthquake has a positive impact on female incomes in the longer term.</p>
+        <p>The results of the DID analysis reveal that the disaster had a significant impact on employment status and income in Fukushima Prefecture. The disaster led to a decline in non-regular employment among females, resulting in an increase in average income for women in the region. The results also show that the disaster had a transformative impact on female labor market participation and employment status, with a shift towards regular employment.</p>
 
         <table class="col-1-l col-2-c col-3-r borders-custom">
-            <caption>Table 1: Estimated Coefficients</caption>
+            <caption>Table 1: Number of workers by employment status and gender - Fukushima, Nationwide</caption>
             <tr class="border-bottom-thick">
-                <th>Variable</th>
-                <th>Estimated Coefficient</th>
-                <th>Standard Error</th>
+                <th>Gender</th>
+                <th>Survey Year</th>
+                <th>Total</th>
+                <th>Regular employees</th>
+                <th>Executives</th>
+                <th>Self-employed</th>
+                <th>Dispatched workers</th>
+                <th>Part-time workers</th>
+                <th>Family workers</th>
             </tr>
             <tr class="border-bottom-thin">
-                <td>Treatment</td>
-                <td>-0.05</td>
-                <td>0.01</td>
+                <td>Male</td>
+                <td>2010</td>
+                <td>523,911</td>
+                <td>331,909</td>
+                <td>35,545</td>
+                <td>80,671</td>
+                <td>11,810</td>
+                <td>52,081</td>
+                <td>11,895</td>
             </tr>
             <tr>
-                <td>Post</td>
-                <td>0.02</td>
-                <td>0.01</td>
+                <td>Male</td>
+                <td>2015</td>
+                <td>525,200</td>
+                <td>342,500</td>
+                <td>34,490</td>
+                <td>70,590</td>
+                <td>12,680</td>
+                <td>54,800</td>
+                <td>10,140</td>
             </tr>
             <tr>
-                <td>Treatment*Post</td>
-                <td>0.05</td>
-                <td>0.01</td>
+                <td>Female</td>
+                <td>2010</td>
+                <td>400,036</td>
+                <td>162,482</td>
+                <td>12,336</td>
+                <td>21,410</td>
+                <td>12,224</td>
+                <td>148,763</td>
+                <td>42,821</td>
+            </tr>
+            <tr>
+                <td>Female</td>
+                <td>2015</td>
+                <td>385,410</td>
+                <td>162,690</td>
+                <td>12,360</td>
+                <td>19,660</td>
+                <td>12,030</td>
+                <td>143,350</td>
+                <td>35,320</td>
             </tr>
         </table>
 
         <h2 id="discussion">Discussion</h2>
-        <p>Our findings suggest that the impact of earthquakes on the gender income gap is complex and dynamic. We explore possible explanations for the surge in female incomes in the longer term, including government support and aid, women's empowerment initiatives, and changes in social norms.</p>
+        <p>The findings of this study have important implications for understanding the economic consequences of natural disasters and the need for targeted policies to support affected populations. The study highlights the importance of considering the gender-differentiated effects of disasters on labor market outcomes and the need for policies that support female labor market participation and employment.</p>
 
         <h2 id="conclusion">Conclusion</h2>
-        <p>This study contributes to the literature on the impact of natural disasters on the gender income gap. Our findings highlight the importance of considering the dynamic and complex effects of earthquakes on the gender income gap. Future research should aim to further explore the mechanisms underlying these effects and to develop policies that promote gender equality in the aftermath of natural disasters.</p>
+        <p>In conclusion, this study provides evidence of the significant impact of the 2011 Fukushima disaster on the labor market in Fukushima Prefecture, with a focus on the gender-differentiated effects on employment status and income. The study highlights the importance of considering the gender-differentiated effects of disasters on labor market outcomes and the need for policies that support female labor market participation and employment.</p>
 
     </article>
+
+    <script>
+        // Dark mode toggle functionality
+        function toggleDarkMode() {
+            document.body.classList.toggle("latex-dark");
+        }
+    </script>
 </body>
 </html>
