@@ -8,27 +8,22 @@ jobs:
     name: github-pages
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
-    container: arcatdmz/texlive
     steps:
       - name: Checkout current repository
         uses: actions/checkout@v3
         with:
-          path: current-repo
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          
       - name: Checkout Outline repository
         uses: actions/checkout@v3
         with:
           repository: tomoto0/Outline
           path: outline-repo
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Cache LaTeX packages
-        uses: actions/cache@v2
-        with:
-          path: /usr/local/share/texmf
-          key: ${{ runner.os }}-texmf-${{ hashFiles('**/Outline.tex') }}
+
       - name: Install LaTeX packages
         run: |
-          apt-get update && apt-get install -y \
+          sudo apt-get update
+          sudo apt-get install -y \
           texlive-latex-base \
           texlive-latex-extra \
           texlive-fonts-recommended \
@@ -36,42 +31,26 @@ jobs:
           texlive-science \
           texlive-publishers \
           cm-super
+
       - name: Build PDF file
+        working-directory: outline-repo
         run: |
-          if [ ! -d "outline-repo" ]; then
-            echo "Error: outline-repo directory not found. Ensure the repository checkout was successful."
-            exit 1
-          fi
-          cd outline-repo
+          set -e
           # Check if image files exist
           if [ ! -f "Annual income table.png" ] || [ ! -f "A conceptual model.jpeg" ]; then
             echo "Error: Required image files are missing."
             exit 1
           fi
           # Run LaTeX and BibTeX commands
-          pdflatex -interaction=nonstopmode Outline.tex
-          bibtex Outline
-          pdflatex -interaction=nonstopmode Outline.tex
-          pdflatex -interaction=nonstopmode Outline.tex
-          pdflatex -interaction=nonstopmode Outline.tex
-          mkdir -p ../current-repo/docs
-          cp Outline.pdf ../current-repo/docs/
-      - name: List contents of docs directory
-        run: |
-          ls -la current-repo/docs
-      - name: Checkout main branch
-        uses: actions/checkout@v3
-        with:
-          ref: main
-          path: main-repo
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Copy PDF to main branch
-        run: |
-          mkdir -p main-repo/docs
-          cp current-repo/docs/Outline.pdf main-repo/docs/
+          pdflatex -interaction=nonstopmode Outline.tex || (cat Outline.log && exit 1)
+          bibtex Outline || (cat Outline.blg && exit 1)
+          pdflatex -interaction=nonstopmode Outline.tex || (cat Outline.log && exit 1)
+          pdflatex -interaction=nonstopmode Outline.tex || (cat Outline.log && exit 1)
+          mkdir -p ../docs
+          cp Outline.pdf ../docs/
+
       - name: Commit and push PDF to main branch
         run: |
-          cd main-repo
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git add docs/Outline.pdf
@@ -81,10 +60,12 @@ jobs:
             git commit -m "Add generated PDF to docs"
             git push origin main
           fi
+
       - name: Check LaTeX log
         if: always()
+        working-directory: outline-repo
         run: |
-          if [ -d "outline-repo" ]; then
-            cd outline-repo
+          if [ -f "Outline.log" ]; then
+            echo "===== Outline.log ====="
             cat Outline.log
           fi
