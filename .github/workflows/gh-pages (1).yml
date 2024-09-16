@@ -13,12 +13,16 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          
+
       - name: Outlineリポジトリをチェックアウト
         uses: actions/checkout@v3
         with:
           repository: tomoto0/Outline
           path: outline-repo
+
+      - name: references.bibをコピー
+        run: |
+          cp current-repo/references.bib outline-repo/
 
       - name: LaTeXパッケージをインストール
         run: |
@@ -42,8 +46,13 @@ jobs:
             echo "Error: 必要な画像ファイルが存在しません。"
             exit 1
           fi
+          # references.bibの存在を確認
+          if [ ! -f "references.bib" ]; then
+            echo "Error: references.bibが存在しません。"
+            exit 1
+          fi
           # latexmkを使用してドキュメントをコンパイル
-          latexmk -pdf -interaction=nonstopmode Outline.tex
+          latexmk -pdf -interaction=nonstopmode -f Outline.tex || (cat Outline.log && exit 1)
           mkdir -p ../docs
           cp Outline.pdf ../docs/
 
