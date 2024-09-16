@@ -9,18 +9,18 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout current repository
+      - name: リポジトリをチェックアウト (current repository)
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           
-      - name: Checkout Outline repository
+      - name: Outlineリポジトリをチェックアウト
         uses: actions/checkout@v3
         with:
           repository: tomoto0/Outline
           path: outline-repo
 
-      - name: Install LaTeX packages
+      - name: LaTeXパッケージをインストール
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -30,38 +30,36 @@ jobs:
           texlive-bibtex-extra \
           texlive-science \
           texlive-publishers \
-          cm-super
+          cm-super \
+          latexmk
 
-      - name: Build PDF file
+      - name: PDFファイルをビルド
         working-directory: outline-repo
         run: |
           set -e
-          # Check if image files exist
+          # 画像ファイルの存在をチェック
           if [ ! -f "Annual income table.png" ] || [ ! -f "A conceptual model.jpeg" ]; then
-            echo "Error: Required image files are missing."
+            echo "Error: 必要な画像ファイルが存在しません。"
             exit 1
           fi
-          # Run LaTeX and BibTeX commands
-          pdflatex -interaction=nonstopmode Outline.tex || (cat Outline.log && exit 1)
-          bibtex Outline || (cat Outline.blg && exit 1)
-          pdflatex -interaction=nonstopmode Outline.tex || (cat Outline.log && exit 1)
-          pdflatex -interaction=nonstopmode Outline.tex || (cat Outline.log && exit 1)
+          # latexmkを使用してドキュメントをコンパイル
+          latexmk -pdf -interaction=nonstopmode Outline.tex
           mkdir -p ../docs
           cp Outline.pdf ../docs/
 
-      - name: Commit and push PDF to main branch
+      - name: PDFをmainブランチにコミット＆プッシュ
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git add docs/Outline.pdf
           if git diff --staged --quiet; then
-            echo "No changes to commit"
+            echo "変更はありません。"
           else
-            git commit -m "Add generated PDF to docs"
+            git commit -m "生成されたPDFをdocsに追加"
             git push origin main
           fi
 
-      - name: Check LaTeX log
+      - name: LaTeXログを確認
         if: always()
         working-directory: outline-repo
         run: |
